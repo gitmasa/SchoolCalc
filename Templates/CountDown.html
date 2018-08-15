@@ -1,0 +1,88 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	'{{$jquery}}'
+	'{{$script}}'
+	'{{$style}}'
+</head>
+<body>
+
+<div id="target">
+	<div id="timer">00:00</div>
+
+	<table id="targetTable">
+	</table>
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+		var questions = '{{$questionCnt}}';
+
+		var timer = calcSrc.classes.countDownTimer($('#timer'), '{{$limitSec}}');
+
+		var $tgt = $('#targetTable');
+		var formulaSet = [];
+
+		'{{$getFormula}}'
+
+		$.each(formulaSet, function(key,formula){
+			var index = key+1;
+			$tgt.append(
+				$('<tr>').addClass('line').append(
+					$('<td>').addClass('num').text(''+(index+1)),
+					$('<td>').attr({'data-value':formula[0]}).addClass('first').text(formula[0]),
+					$('<td>').attr({'data-value':formula[1]}).addClass('ope').text(formula[1]),
+					$('<td>').attr({'data-value':formula[2]}).addClass('second').text(formula[2]),
+					$('<td>').text('='),
+					$('<td>').append(
+						$('<input type="text" size="5" class="ans">')
+					),
+					$('<td>').addClass('result').text('')
+				)
+			);
+		});
+
+		$('#anscheck').on('click', function(){
+			var $lines = $tgt.find('tr.line');
+			var err = false;
+			$lines.each(function(a, lineRaw){
+				var $line = $(lineRaw);
+				var first = parseInt($line.find('.first').data('value'), 10);
+				var ope = $line.find('.ope').data('value');
+				var second = parseInt($line.find('.second').data('value'), 10);
+				var ans = parseInt($line.find('.ans').val(), 10);
+				var $result = $line.find('.result');
+				if ((ope === '+' && first+second === ans)
+					|| (ope === '-' && first-second === ans)
+					|| (ope === '×' && first*second === ans)
+					|| (ope === '÷' && parseInt(first/second,10) === ans)
+				){
+					$result.removeClass('ans_err').text('○');
+				} else {
+					err = true;
+					$result.addClass('ans_err').text('×');
+				}
+			});
+			if (err === false) {
+				timer.stop();
+			}
+
+		});
+
+
+		timer.start(function(){
+
+		});
+
+	});
+
+</script>
+
+</html>
