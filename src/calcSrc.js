@@ -70,8 +70,11 @@ var calcSrc = {};
 	};
 
 	var _getAdditionWithCarryUp_1Digit = function() {
-		var a1 = getRandom(5, 9);
-		var a2 = getRandom(10 - a1, 9);
+		var a1 = calcSrc.getRandom(5, 9);
+		var a2 = calcSrc.getRandom(10 - a1, 9);
+		if (calcSrc.getRandom(1,100) % 3) {
+			return [a2, a1];
+		}
 		return [a1, a2];
 	};
 
@@ -98,6 +101,12 @@ var calcSrc = {};
 			digit--;
 		}
 		return [a.join(''), '+', b.join('')];
+	};
+
+	calcSrc.getAdditionWithCarryUp_2digit_1digit = function() {
+		var first = _getAdditionWithCarryUp_1Digit();
+		var sec = calcSrc.getRandom(1,8);
+		return [sec+''+first[0], '+', first[1]+''];
 	};
 
 	calcSrc.getSubtractionWithCarryDown_min18_1digit = function(){
@@ -129,6 +138,35 @@ var calcSrc = {};
 		return [second[0]+''+first[0], '-', second[1]+''+first[1]];
 	};
 
+	calcSrc.getDivision_2digit_1digit = function(){
+		var a1 = calcSrc.getRandom(2,9);
+		var randMin = parseInt(Math.ceil(10.0 / parseFloat(a1)), 10);
+		var randMax = parseInt(Math.floor(100.0 / parseFloat(a1)), 10);
+		var a2 = calcSrc.getRandom(randMin, randMax);
+		return [(a2*a1)+'', '÷', a1+''];
+	};
+
+	calcSrc.getDivision_3digit_1digit = function(){
+		var a1 = calcSrc.getRandom(2,9);
+		var randMin = parseInt(Math.ceil(100.0 / parseFloat(a1)), 10);
+		var randMax = parseInt(Math.floor(1000.0 / parseFloat(a1)), 10);
+		var a2 = calcSrc.getRandom(randMin, randMax);
+		return [(a2*a1)+'', '÷', a1+''];
+	};
+
+	calcSrc.getMultiple_2digit_1digit = function(){
+		var a1 = calcSrc.getRandom(10,99)+'';
+		var a2 = calcSrc.getRandom(2,9)+'';
+		return [a1, '×', a2];
+	};
+
+	calcSrc.getMultiple_3digit_1digit = function(){
+		var a1 = calcSrc.getRandom(100,999)+'';
+		var a2 = calcSrc.getRandom(2,9)+'';
+		return [a1, '×', a2];
+	};
+
+
 	calcSrc.classes.countDownTimer = (function(){
 		var _skelton = function($target, startSec){
 			var me = this;
@@ -153,7 +191,7 @@ var calcSrc = {};
 					}
 					var _sec = remain % 60;
 					var _min = (remain - _sec) / 60;
-					$timer.text((_min < 10 ? '0' : '') + _min.toString() + ':' + (_sec < 10 ? '0' : '') + _sec.toString());
+					me.$timer.text((_min < 10 ? '0' : '') + _min.toString() + ':' + (_sec < 10 ? '0' : '') + _sec.toString());
 				}, 1000);
 			},
 			stop: function () {
@@ -186,7 +224,7 @@ var calcSrc = {};
 					var nowSec = _now - me.counter_first;
 					var _sec = nowSec % 60;
 					var _min = (nowSec -_sec) / 60;
-					$timer.text((_min < 10 ? '0' : '')+_min.toString()+':'+(_sec < 10 ? '0' : '')+_sec.toString());
+					me.$timer.text((_min < 10 ? '0' : '')+_min.toString()+':'+(_sec < 10 ? '0' : '')+_sec.toString());
 				}, 1000);
 			},
 			stop: function(){

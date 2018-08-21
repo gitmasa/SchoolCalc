@@ -67,6 +67,7 @@ th, td {
 }
 #targetTable td {
 	vertical-align: middle;
+    padding: 4px 1px;
 }
 #targetTable .num {
 	color:#aaa;

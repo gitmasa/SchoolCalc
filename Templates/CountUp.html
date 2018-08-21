@@ -2,7 +2,6 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
 	'{{$jquery}}'
 	'{{$script}}'
 	'{{$style}}'
@@ -27,7 +26,7 @@
 
 		var questions = '{{$questionCnt}}';
 
-		var timer = calcSrc.classes.countUpTimer($('#timer'));
+		var timer = new calcSrc.classes.countUpTimer($('#timer'));
 
 		var $tgt = $('#targetTable');
 		var formulaSet = [];
@@ -38,7 +37,7 @@
 			var index = key+1;
 			$tgt.append(
 				$('<tr>').addClass('line').append(
-					$('<td>').addClass('num').text(''+(index+1)),
+					$('<td>').addClass('num').text(''+index),
 					$('<td>').attr({'data-value':formula[0]}).addClass('first').text(formula[0]),
 					$('<td>').attr({'data-value':formula[1]}).addClass('ope').text(formula[1]),
 					$('<td>').attr({'data-value':formula[2]}).addClass('second').text(formula[2]),
