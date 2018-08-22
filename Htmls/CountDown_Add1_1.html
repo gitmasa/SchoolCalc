@@ -2,25 +2,24 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
-	'{{$jquery}}'
-	'{{$script}}'
-	'{{$style}}'
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<script src="./calcSrc.js"></script>
+	<link rel="stylesheet" href="./calc.css" type="text/css" media="all"/>
 </head>
 <body>
 
 <div id="target">
   <div id="header">
-    <div id="timer">00:00</div>
+  	<div id="timer">00:00</div>
     <div id="detailButtons">
       <input type="button" value="成績" id="showDetail"/>
     </div>
   </div>
   <div id="detailbox"></div>
+
 	<table id="targetTable">
 	</table>
-	<div id="buttons">
-		<input type="button" id="anscheck" value="答え合わせ"/>
-	</div>
 </div>
 
 </body>
@@ -29,19 +28,11 @@
 
 	$(document).ready(function(){
 
-		var questions = '{{$questionCnt}}';
+		var questions = 100;
 
-    var history = new calcSrc.classes.ResultDb("'{{$title}}'");
+    var history = new calcSrc.classes.ResultDb("Add1_1");
     var $historyBtn = $('#showDetail');
     var $historyBox = $('#detailbox');
-    var formatMs = function(val){
-      if (!val) {
-        return '--:--';
-      }
-      var _sec = val % 60;
-      var _min = (val - _sec) / 60;
-      return (_min < 10 ? '0' : '')+_min.toString()+':'+(_sec < 10 ? '0' : '')+_sec.toString();
-    };
     if (!history.isAllow) {
       $historyBtn.addClass('click_disable');
     } else {
@@ -51,7 +42,7 @@
           return;
         }
         $historyBox.addClass('detailbox_show');
-        var minInfo = history.getMin();
+        var maxInfo = history.getMax();
         var summaries = history.getRecent(10);
         $historyBox.html('');
         var $hisTable = $('<table>');
@@ -59,14 +50,14 @@
           $hisTable.append(
             $('<tr>').append(
               $('<td>').text(history.formatTime(val['dt'])),
-              $('<td>').addClass('table_result').text(formatMs(val['value']))
+              $('<td>').addClass('table_result').text(val['value']+'回')
             )
           );
         });
         $historyBox.append(
           $('<div>').append(
-            $('<span>').addClass('result_max').text('最高：'+ formatMs(minInfo['value']) + ''),
-            $('<span>').addClass('result_max').text('('+history.formatTime(minInfo['dt'])+')'),
+            $('<span>').addClass('result_max').text('最高：'+ maxInfo['value'] + '回'),
+            $('<span>').addClass('result_max').text('('+history.formatTime(maxInfo['dt'])+')'),
             $('<input type="button" value="消去" class="result_remove">')
           ),
           $hisTable
@@ -78,12 +69,22 @@
       });
     }
 
-    var timer = new calcSrc.classes.CountUpTimer($('#timer'));
+    var timer = new calcSrc.classes.CountDownTimer($('#timer'), 60);
 
 		var $tgt = $('#targetTable');
 		var formulaSet = [];
 
-		'{{$getFormula}}'
+		for (var i=0;i<questions; i++){
+	var tst = calcSrc.getRandom(1, 100);
+	if (tst % 3) {
+		var a1 = calcSrc.getRandom(1, 9);
+		var a2 = calcSrc.getRandom(1, 9);
+		formulaSet.push([''+a1, '+', ''+a2]);
+	} else {
+		formulaSet.push(calcSrc.getAdditionWithCarryUp(1));
+	}
+}
+
 
 		$.each(formulaSet, function(key,formula){
 			var index = key+1;
@@ -102,36 +103,33 @@
 			);
 		});
 
-		$('#anscheck').on('click', function(){
-			var $lines = $tgt.find('tr.line');
-			var err = false;
-			$lines.each(function(a, lineRaw){
-				var $line = $(lineRaw);
-				var first = parseInt($line.find('.first').data('value'), 10);
-				var ope = $line.find('.ope').data('value');
-				var second = parseInt($line.find('.second').data('value'), 10);
-				var ans = parseInt($line.find('.ans').val(), 10);
-				var $result = $line.find('.result');
-				if ((ope === '+' && first+second === ans)
-					|| (ope === '-' && first-second === ans)
-					|| (ope === '×' && first*second === ans)
-					|| (ope === '÷' && parseInt(first/second,10) === ans)
-				){
-					$result.removeClass('ans_err').text('○');
-				} else {
-					err = true;
-					$result.addClass('ans_err').text('×');
-				}
-			});
-			if (err === false) {
-				timer.stop();
-        history.save(timer.result);
-			}
 
+		timer.start(function(){
+      var $lines = $tgt.find('tr.line');
+      var validCount = 0;
+      $lines.each(function(a, lineRaw){
+        var $line = $(lineRaw);
+        var first = parseInt($line.find('.first').data('value'), 10);
+        var ope = $line.find('.ope').data('value');
+        var second = parseInt($line.find('.second').data('value'), 10);
+        var $ans = $line.find('.ans');
+        $ans.prop('disabled', true);
+        var ans = parseInt($ans.val(), 10);
+        var $result = $line.find('.result');
+        if ((ope === '+' && first+second === ans)
+          || (ope === '-' && first-second === ans)
+          || (ope === '×' && first*second === ans)
+          || (ope === '÷' && parseInt(first/second,10) === ans)
+        ){
+          validCount++;
+          $result.removeClass('ans_err').text('○');
+        } else {
+          $result.addClass('ans_err').text('×');
+        }
+      });
+      history.save(validCount);
+      $('#timer').text('あなたの正解数は['+validCount+']問です')
 		});
-
-
-		timer.start();
 
 	});
 

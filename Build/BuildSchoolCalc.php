@@ -5,18 +5,21 @@ class BuildSchoolCalc
 {
 
   const JQUERY_FROM_GOOGLE = 0;
-  const COUNTUP_COUNT = 25;
-  const COUNTDOWN_TIMER_SEC = 120;
+  const COUNTUP_COUNT = 20;
+  const COUNTDOWN_TIMER_SEC = 60;
   const COUNTDOWN_COUNT = 100;
 
   private $srcPath = __DIR__.'/../src';
   private $templatePath = __DIR__.'/../Templates';
 
   private $deployNames = [
+    'Add1_1',
     'Add2_1',
     'Add2_2',
+    'Sub1_1',
     'Sub2_1',
     'Sub2_2',
+    'Mul1_1',
     'Mul2_1',
     'Div2_1',
   ];
@@ -41,6 +44,7 @@ class BuildSchoolCalc
 
     $rets['\'{{$getFormula}}\''] = file_get_contents(__DIR__.sprintf('/../src/FormulaBuilders/%s.js', $name));
     $rets['\'{{$questionCnt}}\''] = $isCountDown ? self::COUNTDOWN_COUNT : self::COUNTUP_COUNT;
+    $rets['\'{{$title}}\''] = $name;
     if ($isCountDown) {
       $rets['\'{{$limitSec}}\''] = self::COUNTDOWN_TIMER_SEC;
     }

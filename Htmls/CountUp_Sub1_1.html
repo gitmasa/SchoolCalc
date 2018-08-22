@@ -2,9 +2,9 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
-	'{{$jquery}}'
-	'{{$script}}'
-	'{{$style}}'
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<script src="./calcSrc.js"></script>
+	<link rel="stylesheet" href="./calc.css" type="text/css" media="all"/>
 </head>
 <body>
 
@@ -29,9 +29,9 @@
 
 	$(document).ready(function(){
 
-		var questions = '{{$questionCnt}}';
+		var questions = 20;
 
-    var history = new calcSrc.classes.ResultDb("'{{$title}}'");
+    var history = new calcSrc.classes.ResultDb("Sub1_1");
     var $historyBtn = $('#showDetail');
     var $historyBox = $('#detailbox');
     var formatMs = function(val){
@@ -83,7 +83,18 @@
 		var $tgt = $('#targetTable');
 		var formulaSet = [];
 
-		'{{$getFormula}}'
+		for (var i=0;i<questions; i++){
+	var a1 = calcSrc.getRandom(1, 9);
+	var a2 = calcSrc.getRandom(1, 9);
+	var tmp = 0;
+	if (a1 < a2) {
+		tmp = a1;
+		a1 = a2;
+		a2 = tmp;
+	}
+	formulaSet.push([''+a1, '-', ''+a2]);
+}
+
 
 		$.each(formulaSet, function(key,formula){
 			var index = key+1;

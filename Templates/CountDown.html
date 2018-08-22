@@ -10,7 +10,13 @@
 <body>
 
 <div id="target">
-	<div id="timer">00:00</div>
+  <div id="header">
+  	<div id="timer">00:00</div>
+    <div id="detailButtons">
+      <input type="button" value="成績" id="showDetail"/>
+    </div>
+  </div>
+  <div id="detailbox"></div>
 
 	<table id="targetTable">
 	</table>
@@ -24,7 +30,46 @@
 
 		var questions = '{{$questionCnt}}';
 
-		var timer = new calcSrc.classes.countDownTimer($('#timer'), '{{$limitSec}}');
+    var history = new calcSrc.classes.ResultDb("'{{$title}}'");
+    var $historyBtn = $('#showDetail');
+    var $historyBox = $('#detailbox');
+    if (!history.isAllow) {
+      $historyBtn.addClass('click_disable');
+    } else {
+      $historyBtn.on('click', function(){
+        if ($historyBox.hasClass('detailbox_show')) {
+          $historyBox.removeClass('detailbox_show');
+          return;
+        }
+        $historyBox.addClass('detailbox_show');
+        var maxInfo = history.getMax();
+        var summaries = history.getRecent(10);
+        $historyBox.html('');
+        var $hisTable = $('<table>');
+        $.each(summaries, function(key, val){
+          $hisTable.append(
+            $('<tr>').append(
+              $('<td>').text(history.formatTime(val['dt'])),
+              $('<td>').addClass('table_result').text(val['value']+'回')
+            )
+          );
+        });
+        $historyBox.append(
+          $('<div>').append(
+            $('<span>').addClass('result_max').text('最高：'+ maxInfo['value'] + '回'),
+            $('<span>').addClass('result_max').text('('+history.formatTime(maxInfo['dt'])+')'),
+            $('<input type="button" value="消去" class="result_remove">')
+          ),
+          $hisTable
+        );
+        $historyBox.find('.result_remove').on('click', function(){
+          $historyBox.removeClass('detailbox_show');
+          history.clear();
+        });
+      });
+    }
+
+    var timer = new calcSrc.classes.CountDownTimer($('#timer'), '{{$limitSec}}');
 
 		var $tgt = $('#targetTable');
 		var formulaSet = [];
@@ -72,6 +117,7 @@
           $result.addClass('ans_err').text('×');
         }
       });
+      history.save(validCount);
       $('#timer').text('あなたの正解数は['+validCount+']問です')
 		});
 
