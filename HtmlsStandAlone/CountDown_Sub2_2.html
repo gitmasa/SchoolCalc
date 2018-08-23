@@ -56,8 +56,8 @@ var calcSrc = {};
 		var a1 = 0;
 		var a2 = 0;
 		while(1) {
-			a1 = getRandom(min, max);
-			a2 = getRandom(min, max);
+			a1 = calcSrc.getRandom(min, max);
+			a2 = calcSrc.getRandom(min, max);
 			if(a1 !== a2) {
 				break;
 			}
@@ -538,7 +538,7 @@ th, td {
 
 		var questions = 100;
 
-    var history = new calcSrc.classes.ResultDb("Sub2_2");
+    var history = new calcSrc.classes.ResultDb("cd90__Sub2_2");
     var $historyBtn = $('#showDetail');
     var $historyBox = $('#detailbox');
     if (!history.isAllow) {
@@ -577,13 +577,13 @@ th, td {
       });
     }
 
-    var timer = new calcSrc.classes.CountDownTimer($('#timer'), 60);
+    var timer = new calcSrc.classes.CountDownTimer($('#timer'), 90);
 
 		var $tgt = $('#targetTable');
 		var formulaSet = [];
 
 		for (var i=0;i<questions; i++){
-	formulaSet.push(calcSrc.calcSrc.getSubtractionWithCarryDown_2digit_2digit());
+	formulaSet.push(calcSrc.getSubtractionWithCarryDown_2digit_2digit());
 }
 
 

@@ -6,7 +6,7 @@ class BuildSchoolCalc
 
   const JQUERY_FROM_GOOGLE = 0;
   const COUNTUP_COUNT = 20;
-  const COUNTDOWN_TIMER_SEC = 60;
+  const COUNTDOWN_TIMER_SEC = 90;
   const COUNTDOWN_COUNT = 100;
 
   private $srcPath = __DIR__.'/../src';
@@ -22,6 +22,7 @@ class BuildSchoolCalc
     'Mul1_1',
     'Mul2_1',
     'Div2_1',
+    'Div3_1',
   ];
 
   public function __construct()
@@ -44,7 +45,9 @@ class BuildSchoolCalc
 
     $rets['\'{{$getFormula}}\''] = file_get_contents(__DIR__.sprintf('/../src/FormulaBuilders/%s.js', $name));
     $rets['\'{{$questionCnt}}\''] = $isCountDown ? self::COUNTDOWN_COUNT : self::COUNTUP_COUNT;
-    $rets['\'{{$title}}\''] = $name;
+    $rets['\'{{$title}}\''] = sprintf('%s__%s',
+      ($isCountDown ? sprintf('cd%s', self::COUNTDOWN_TIMER_SEC) : sprintf('cu%s', self::COUNTUP_COUNT)),
+      $name);
     if ($isCountDown) {
       $rets['\'{{$limitSec}}\''] = self::COUNTDOWN_TIMER_SEC;
     }

@@ -44,8 +44,8 @@ var calcSrc = {};
 		var a1 = 0;
 		var a2 = 0;
 		while(1) {
-			a1 = getRandom(min, max);
-			a2 = getRandom(min, max);
+			a1 = calcSrc.getRandom(min, max);
+			a2 = calcSrc.getRandom(min, max);
 			if(a1 !== a2) {
 				break;
 			}
