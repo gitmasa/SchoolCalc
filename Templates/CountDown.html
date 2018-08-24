@@ -29,6 +29,7 @@
 	$(document).ready(function(){
 
 		var questions = '{{$questionCnt}}';
+    var limitSec = '{{$limitSec}}';
 
     var history = new calcSrc.classes.ResultDb("'{{$title}}'");
     var $historyBtn = $('#showDetail');
@@ -56,7 +57,7 @@
         });
         $historyBox.append(
           $('<div>').append(
-            $('<span>').addClass('result_max').text('最高：'+ maxInfo['value'] + '回'),
+            $('<span>').addClass('result_max').text('最高：'+ maxInfo['value'] + '問'),
             $('<span>').addClass('result_max').text('('+history.formatTime(maxInfo['dt'])+')'),
             $('<input type="button" value="消去" class="result_remove">')
           ),
@@ -69,7 +70,7 @@
       });
     }
 
-    var timer = new calcSrc.classes.CountDownTimer($('#timer'), '{{$limitSec}}');
+    var timer = new calcSrc.classes.CountDownTimer($('#timer'), limitSec);
 
 		var $tgt = $('#targetTable');
 		var formulaSet = [];

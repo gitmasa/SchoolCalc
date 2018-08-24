@@ -29,8 +29,9 @@
 	$(document).ready(function(){
 
 		var questions = 100;
+    var limitSec = 180;
 
-    var history = new calcSrc.classes.ResultDb("cd90__Add2_2");
+    var history = new calcSrc.classes.ResultDb("cd180__Add2_2");
     var $historyBtn = $('#showDetail');
     var $historyBox = $('#detailbox');
     if (!history.isAllow) {
@@ -56,7 +57,7 @@
         });
         $historyBox.append(
           $('<div>').append(
-            $('<span>').addClass('result_max').text('最高：'+ maxInfo['value'] + '回'),
+            $('<span>').addClass('result_max').text('最高：'+ maxInfo['value'] + '問'),
             $('<span>').addClass('result_max').text('('+history.formatTime(maxInfo['dt'])+')'),
             $('<input type="button" value="消去" class="result_remove">')
           ),
@@ -69,7 +70,7 @@
       });
     }
 
-    var timer = new calcSrc.classes.CountDownTimer($('#timer'), 90);
+    var timer = new calcSrc.classes.CountDownTimer($('#timer'), limitSec);
 
 		var $tgt = $('#targetTable');
 		var formulaSet = [];

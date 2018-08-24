@@ -6,7 +6,7 @@ class BuildSchoolCalc
 
   const JQUERY_FROM_GOOGLE = 0;
   const COUNTUP_COUNT = 20;
-  const COUNTDOWN_TIMER_SEC = 90;
+  const COUNTDOWN_TIMER_SEC = 180;
   const COUNTDOWN_COUNT = 100;
 
   private $srcPath = __DIR__.'/../src';
