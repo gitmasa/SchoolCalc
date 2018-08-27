@@ -5,31 +5,30 @@ class BuildSchoolCalc
 {
 
   const JQUERY_FROM_GOOGLE = 0;
-  const COUNTUP_COUNT = 20;
-  const COUNTDOWN_TIMER_SEC = 180;
-  const COUNTDOWN_COUNT = 100;
 
   private $srcPath = __DIR__.'/../src';
   private $templatePath = __DIR__.'/../Templates';
 
   private $deployNames = [
-    'Add1_1',
-    'Add2_1',
-    'Add2_2',
-    'Sub1_1',
-    'Sub2_1',
-    'Sub2_2',
-    'Mul1_1',
-    'Mul2_1',
-    'Div2_1',
-    'Div3_1',
+    ['name'=>'Add1_1', 'js'=>'Add1_1', 'up'=>20, 'down'=>200, 'down_sec'=>180],
+    ['name'=>'Add2_1', 'js'=>'Add2_1', 'up'=>20, 'down'=>200, 'down_sec'=>180],
+    ['name'=>'Add2_2', 'js'=>'Add2_2', 'up'=>20, 'down'=>100, 'down_sec'=>180],
+    ['name'=>'Sub1_1', 'js'=>'Sub1_1', 'up'=>20, 'down'=>200, 'down_sec'=>180],
+    ['name'=>'Sub2_1', 'js'=>'Sub2_1', 'up'=>20, 'down'=>100, 'down_sec'=>180],
+    ['name'=>'Sub2_2', 'js'=>'Sub2_2', 'up'=>20, 'down'=>100, 'down_sec'=>180],
+    ['name'=>'Sub2_max19_1', 'js'=>'Sub2_max19_1', 'up'=>100, 'down'=>100, 'down_sec'=>180],
+    ['name'=>'Mul1_1', 'js'=>'Mul1_1', 'up'=>20, 'down'=>200, 'down_sec'=>180],
+    ['name'=>'Mul1_1_all', 'js'=>'Mul1_1_all', 'up'=>20, 'down'=>200, 'down_sec'=>180],
+    ['name'=>'Mul2_1', 'js'=>'Mul2_1', 'up'=>20, 'down'=>100, 'down_sec'=>180],
+    ['name'=>'Div2_1', 'js'=>'Div2_1', 'up'=>20, 'down'=>100, 'down_sec'=>180],
+    ['name'=>'Div3_1', 'js'=>'Div3_1', 'up'=>20, 'down'=>100, 'down_sec'=>180],
   ];
 
   public function __construct()
   {
   }
 
-  private function _getReplaces($isCountDown, $name, $standAlone)
+  private function _getReplaces($isCountDown, $standAlone, $settings)
   {
     $rets = [];
     $rets['\'{{$jquery}}\''] = (!$standAlone || self::JQUERY_FROM_GOOGLE)
@@ -43,13 +42,13 @@ class BuildSchoolCalc
       ? '<link rel="stylesheet" href="./calc.css" type="text/css" media="all"/>'
       : '<style type="text/css">'."\n".file_get_contents(__DIR__.'/../src/calc.css')."\n".'</style>'."\n";
 
-    $rets['\'{{$getFormula}}\''] = file_get_contents(__DIR__.sprintf('/../src/FormulaBuilders/%s.js', $name));
-    $rets['\'{{$questionCnt}}\''] = $isCountDown ? self::COUNTDOWN_COUNT : self::COUNTUP_COUNT;
+    $rets['\'{{$getFormula}}\''] = file_get_contents(__DIR__.sprintf('/../src/FormulaBuilders/%s.js', $settings['js']));
+    $rets['\'{{$questionCnt}}\''] = $isCountDown ? $settings['down'] : $settings['up'];
     $rets['\'{{$title}}\''] = sprintf('%s__%s',
-      ($isCountDown ? sprintf('cd%s', self::COUNTDOWN_TIMER_SEC) : sprintf('cu%s', self::COUNTUP_COUNT)),
-      $name);
+      ($isCountDown ? sprintf('cd%s', $settings['down_sec']) : sprintf('cu%s', $settings['up'])),
+      $settings['name']);
     if ($isCountDown) {
-      $rets['\'{{$limitSec}}\''] = self::COUNTDOWN_TIMER_SEC;
+      $rets['\'{{$limitSec}}\''] = $settings['down_sec'];
     }
     return $rets;
   }
@@ -59,10 +58,10 @@ class BuildSchoolCalc
   public function deployCountUp($dstPath, $standAlone=false)
   {
     $template = file_get_contents(__DIR__.'/../Templates/CountUp.html');
-    foreach ($this->deployNames as $name) {
-      $replaces = $this->_getReplaces(false, $name, $standAlone);
+    foreach ($this->deployNames as $setting) {
+      $replaces = $this->_getReplaces(false, $standAlone, $setting);
       $saveData = str_replace(array_keys($replaces), array_values($replaces), $template);
-      $path = sprintf('%s/CountUp_%s.html', $dstPath, $name);
+      $path = sprintf('%s/CountUp_%s.html', $dstPath, $setting['name']);
       file_put_contents($path, $saveData);
     }
   }
@@ -70,10 +69,10 @@ class BuildSchoolCalc
   public function deployCountDown($dstPath, $standAlone=false)
   {
     $template = file_get_contents(__DIR__.'/../Templates/CountDown.html');
-    foreach ($this->deployNames as $name) {
-      $replaces = $this->_getReplaces(true, $name, $standAlone);
+    foreach ($this->deployNames as $setting) {
+      $replaces = $this->_getReplaces(true, $standAlone, $setting);
       $saveData = str_replace(array_keys($replaces), array_values($replaces), $template);
-      $path = sprintf('%s/CountDown_%s.html', $dstPath, $name);
+      $path = sprintf('%s/CountDown_%s.html', $dstPath, $setting['name']);
       file_put_contents($path, $saveData);
     }
   }

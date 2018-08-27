@@ -32,7 +32,7 @@
 		var questions = 100;
     var limitSec = 180;
 
-    var history = new calcSrc.classes.ResultDb("cd180__Sub2_2");
+    var history = new calcSrc.classes.ResultDb("cd180__Sub2_max19_1");
     var $historyBtn = $('#showDetail');
     var $historyBox = $('#detailbox');
     if (!history.isAllow) {
@@ -78,7 +78,9 @@
       var formulaSet = [];
 
       for (var i=0;i<questions; i++){
-	formulaSet.push(calcSrc.getSubtractionWithCarryDown_2digit_2digit());
+	var a = calcSrc.getRandom(10,19);
+	var b = calcSrc.getRandom(0,9);
+	formulaSet.push([a+'', '-', b+'']);
 }
 
 

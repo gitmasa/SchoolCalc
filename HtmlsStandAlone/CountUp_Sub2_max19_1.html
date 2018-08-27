@@ -559,9 +559,9 @@ th, td {
 
 	$(document).ready(function(){
 
-		var questions = 20;
+		var questions = 100;
 
-    var history = new calcSrc.classes.ResultDb("cu20__Add1_1");
+    var history = new calcSrc.classes.ResultDb("cu100__Sub2_max19_1");
     var $historyBtn = $('#showDetail');
     var $historyBox = $('#detailbox');
     var formatMs = function(val){
@@ -618,24 +618,10 @@ th, td {
       $tgt.html('');
 
       var formulaSet = [];
-      var preFormula = null;
-var getFormula = function(){
-	var tst = calcSrc.getRandom(1, 100);
-	if (tst % 3) {
-		var a1 = calcSrc.getRandom(1, 9);
-		var a2 = calcSrc.getRandom(1, 9);
-		return [''+a1, '+', ''+a2];
-	} else {
-		return calcSrc.getAdditionWithCarryUp(1);
-	}
-};
-for (var i=0;i<questions; i++){
-	var tmpFormula = getFormula();
-	if (preFormula !== null && preFormula[0] == tmpFormula[0] && preFormula[0] == tmpFormula[0]) {
-		tmpFormula = getFormula();
-	}
-	preFormula = tmpFormula;
-	formulaSet.push(tmpFormula);
+      for (var i=0;i<questions; i++){
+	var a = calcSrc.getRandom(10,19);
+	var b = calcSrc.getRandom(0,9);
+	formulaSet.push([a+'', '-', b+'']);
 }
 
 

@@ -7,7 +7,9 @@ var calcSrc = {};
 		if (min === max) {
 			return min;
 		}
-		return parseInt(Math.random() * (max - min) + min, 10);
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	};
 
 	calcSrc.getThreeOneDiv = function(){
@@ -202,6 +204,7 @@ var calcSrc = {};
 					}
 					clearInterval(me.timerId);
 					me.timerId = null;
+					me.counterFirst = 0;
 				}
 			}
 		};
@@ -235,7 +238,11 @@ var calcSrc = {};
 					me.result = _now - me.counter_first;
 					clearInterval(me.timerId);
 					me.timerId = null;
+					me.counter_first = 0;
 				}
+			},
+			isStopped: function(){
+				return this.timerId === null;
 			}
 		};
 		return _skelton;

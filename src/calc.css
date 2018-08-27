@@ -10,6 +10,15 @@ img, ul, ol, dl, li, dt, dd, form, label, table, thead, tbody, tfoot, th, tr, td
 	word-wrap: break-word;
 	-webkit-tap-highlight-color: transparent;
 }
+html {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Original Yu Gothic", "Yu Gothic", YuGothic, Verdana, Meiryo, "M+ 1p", sans-serif;
+}
+@media all and (-ms-high-contrast: none)  {
+    html { font-family: Verdana, Meiryo, sans-serif;}
+}
+@media all and (-ms-high-contrast: active) {
+    html { font-family: Verdana, Meiryo, sans-serif;}
+}
 
 html {
 	font-size: 62.5%;
@@ -98,11 +107,16 @@ th, td {
 }
 #targetTable td {
 	vertical-align: middle;
-    padding: 4px 1px;
+    padding: 6px 3px;
+    font-size:18px;
 }
-#targetTable .num {
+#targetTable td input.ans {
+    height:32px;
+    font-size:18px;
+}
+#targetTable td.num {
 	color:#aaa;
-	font-size:12px;
+	font-size:14px;
 }
 #targetTable .result {
 	color: #00f;
