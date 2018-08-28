@@ -110,11 +110,11 @@ th, td {
     padding: 6px 3px;
     font-size:18px;
 }
-#targetTable td input.ans {
+#targetTable input.ans {
     height:32px;
     font-size:18px;
 }
-#targetTable td.num {
+#targetTable .num {
 	color:#aaa;
 	font-size:14px;
 }

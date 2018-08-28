@@ -395,7 +395,7 @@ var calcSrc = {};
 	})();
 
 
-	calcSrc.classes.questionBuilder = (function(){
+	calcSrc.classes.QuestionBuilder = (function(){
 		var _skelton = function(){
 			var me = this;
 			me.multiFnc = function(){
@@ -407,7 +407,7 @@ var calcSrc = {};
 				return calcSrc.getAdditionWithCarryUp(2);
 			};
 			me.subFnc = function(){
-				return calcSrc.getSubtractionWithCarryDown_2digit_1digit();
+				return calcSrc.getSubtractionWithCarryDown_2digit_2digit();
 			};
 			me.divFnc = function(){
 				return calcSrc.getDivision_2digit_1digit();
@@ -613,8 +613,8 @@ var calcSrc = {};
 					},
 					{
 						'method': 'div',
-						'require': ['c'],
-						'fnc': function(x, y, c) {
+						'require': ['a', 'c'],
+						'fnc': function(x, y, a, c) {
 							return a + 'は' + x +'円持っています。1' + c['unit'] + 'が' + y + '円の' + c['str'] + 'は、何'
 								+ c['unit'] + 'かうことができますか。';
 						}
