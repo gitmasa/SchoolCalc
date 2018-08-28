@@ -181,6 +181,9 @@ var calcSrc = {};
 		_skelton.prototype = {
 			start: function (onStopCallback) {
 				var me = this;
+				if (me.timerId) {
+					clearInterval(me.timerId);
+				}
 				me.onStopCallback = onStopCallback;
 				me.counter_first = parseInt((new Date) / 1000, 10);
 				me.timerId = setInterval(function () {
@@ -204,7 +207,6 @@ var calcSrc = {};
 					}
 					clearInterval(me.timerId);
 					me.timerId = null;
-					me.counterFirst = 0;
 				}
 			}
 		};
@@ -222,8 +224,15 @@ var calcSrc = {};
 		_skelton.prototype = {
 			start: function(){
 				var me = this;
+				if (me.timerId) {
+					clearInterval(me.timerId);
+				}
+				me.result = 0;
 				me.counter_first = parseInt((new Date)/1000, 10);
 				me.timerId = setInterval(function(){
+					if (me.timerId === null) {
+						return;
+					}
 					var _now = parseInt((new Date)/1000, 10);
 					var nowSec = _now - me.counter_first;
 					var _sec = nowSec % 60;
@@ -238,7 +247,6 @@ var calcSrc = {};
 					me.result = _now - me.counter_first;
 					clearInterval(me.timerId);
 					me.timerId = null;
-					me.counter_first = 0;
 				}
 			},
 			isStopped: function(){
@@ -300,10 +308,9 @@ var calcSrc = {};
 				if (!me.isAllow) {
 					return;
 				}
-				if (me.cached !== null) {
+				if (me.cached !== null && Array.isArray(me.cached)) {
 					return;
 				}
-				window.localStorage.getItem(me.keyName);
 				me.cached = me._formatData(window.localStorage.getItem(me.keyName));
 			},
 			clear: function(){
@@ -387,6 +394,356 @@ var calcSrc = {};
 		return _skelton;
 	})();
 
+
+	calcSrc.classes.questionBuilder = (function(){
+		var _skelton = function(){
+			var me = this;
+			me.multiFnc = function(){
+				var a1 = calcSrc.getRandom(2, 9);
+				var a2 = calcSrc.getRandom(2, 9);
+				return [''+a1, '×', ''+a2];
+			};
+			me.addFnc = function(){
+				return calcSrc.getAdditionWithCarryUp(2);
+			};
+			me.subFnc = function(){
+				return calcSrc.getSubtractionWithCarryDown_2digit_1digit();
+			};
+			me.divFnc = function(){
+				return calcSrc.getDivision_2digit_1digit();
+			};
+		};
+		_skelton.prototype = {
+			_aSet: [
+				'たろうくん',
+				'花子さん',
+				'いちろうくん',
+				'三太くん',
+				'かつやくん',
+				'ゆうこさん',
+				'ようこさん',
+				'おにいさん',
+				'おねえさん',
+				'たいちくん'
+			],
+			_bSet: [
+			'ようすけくん',
+			'こうじくん',
+			'れなさん',
+			'めぐみさん',
+			'さちこさん',
+			'おとうと',
+			'いもうと'
+		],
+			_cSet: [
+			{'str':'けしごむ', 'unit':'こ'},
+			{'str':'えんぴつ', 'unit':'本'},
+			{'str':'あめ玉', 'unit':'こ'},
+			{'str':'おはじき', 'unit':'こ'},
+			{'str':'ビーだま', 'unit':'こ'},
+			{'str':'おりがみ', 'unit':'まい'}
+		],
+			_dSet: [
+			{'str':'アイスクリーム', 'unit':'こ'},
+			{'str':'本', 'unit':'さつ'},
+			{'str':'ジュース', 'unit':'本'},
+			{'str':'ノート', 'unit':'さつ'},
+			{'str':'チョコレート', 'unit':'こ'}
+		],
+			getAdds: function(){
+				return [
+					{
+						'method': 'add',
+						'require': ['a', 'b', 'c'],
+						'fnc': function(x, y, a, b, c) {
+							return a + 'は' + c['str'] + 'を' + x + c['unit'] + '持っています。'
+								+ b + 'は' + c['str'] + 'を' + y + c['unit'] + '持っています。あわせて何' + c['unit'] + 'の' + c['str'] + 'を持っていますか。';
+						}
+					},
+					{
+						'method': 'add',
+						'require': ['a', 'b', 'c'],
+						'fnc': function(x, y, a, b, c) {
+							return a + 'は' + c['str'] + 'を' + x + c['unit'] + '持っています。'
+								+ b + 'は' + c['str'] + 'を' + y + c['unit'] + '持っています。' + a + 'が' + b + 'にすべてあげると'
+								+ b + 'の' + c['str'] + 'は何' + c['unit'] + 'になりますか。';
+						}
+					},
+					{
+						'method': 'add',
+						'require': ['a'],
+						'fnc': function(x, y, a) {
+							return a + 'は' + x + '円持っています。おこづかいを' + y + '円もらうと、ぜんぶで何円になりますか。';
+						}
+					},
+					{
+						'method': 'add',
+						'require': ['a', 'b', 'c'],
+						'fnc': function(x, y, a, b, c) {
+							return a + 'のいえには、' + c['str'] + 'が' + x + c['unit'] + '、' + b + 'のいえには、' + c['str'] + 'が'
+								+ y + c['unit'] + 'あります。あわせて何' + c['unit'] + 'ですか。';
+						}
+					},
+					{
+						'method': 'add',
+						'require': ['c', 'd'],
+						'fnc': function(x, y, c, d) {
+							return x + '円の' + c['str'] + 'と、' + y + '円の' + d['str'] + 'を買います。だいきんはいくらになりますか。';
+						}
+					},
+					{
+						'method': 'add',
+						'require': [],
+						'fnc': function(x, y) {
+							return 'ある本を' + x + 'ページまでよみました。のこりのページをかぞえると' + y + 'ページでした。この本はぜんぶで何ページですか。';
+						}
+					}
+				];
+			},
+			getSubs: function(){
+				return [
+					{
+						'method': 'sub',
+						'require': ['a', 'b', 'c'],
+						'fnc': function(x, y, a, b, c) {
+							return a + 'は' + c['str'] + 'を' + x + c['unit'] + '持っています。' + b + 'は' + c['str'] + 'を'
+							+ y + c['unit'] + '持っています。多い人は何' + c['unit'] + 'だけおおくもっていますか。';
+						}
+					},
+					{
+						'method': 'sub',
+						'require': ['a', 'b', 'c'],
+						'fnc': function(x, y, a, b, c) {
+							return a + 'は' + c['str'] + 'を' + x + c['unit'] + '持っています。' + b + 'に'
+								+ y + c['unit'] + 'あげると、のこりは何' + c['unit'] + 'になりますか。';
+						}
+					},
+					{
+						'method': 'sub',
+						'require': ['a', 'c'],
+						'fnc': function(x, y, a, c) {
+							return a + 'は' + x + '円持っています。' + y + '円の' + c['str'] + 'をかうと、何円のこりますか。';
+						}
+					},
+					{
+						'method': 'sub',
+						'require': ['c'],
+						'fnc': function(x, y, c) {
+							return x + '円の' + c['str'] + 'があります。いま、おこづかいを'
+								+ y + '円もっているとすると、あと何円ためると' + c['str'] + 'をかうことができますか。';
+						}
+					},
+					{
+						'method': 'sub',
+						'require': [],
+						'fnc': function(x, y) {
+							return x + 'ページある本を' + y + 'ページまでよみました。のこりは何ページですか。';
+						}
+					}
+				];
+			},
+			getMuls: function(){
+				return [
+					{
+						'method': 'mul',
+						'require': ['a'],
+						'fnc': function(x, y, a) {
+							return a + 'はたて' + x + 'ます、よこ' + y + 'ますのほうがん紙のそれぞれのます目に、おはじきを1つずつおいていきました。'
+								+ 'ぜんぶでおはじきを何個おきましたか。'
+						}
+					},
+					{
+						'method': 'mul',
+						'require': ['c'],
+						'fnc': function(x, y, c) {
+							return x + '人に、' + c['str'] + 'を' + y + c['unit'] + 'ずつくばろうと思います。' + c['str']
+								+ 'はぜんぶで何' + c['unit'] + 'ひつようですか。';
+						}
+					},
+					{
+						'method': 'mul',
+						'require': ['c'],
+						'fnc': function(x, y, c) {
+							return 'ふくろのなかにたくさんの' + c['str'] + 'がはいっています。' + x + '人が、ひとり' + y + c['unit']
+								+ 'ずつふくろから' + c['str'] + 'をとりだすと、ちょうどふくろのなかの' + c['str']
+								+ 'がなくなりました。さいしょにふくろに入っていた' + c['str'] + 'は何' + c['unit'] + 'だったでしょうか。';
+						}
+					},
+					{
+						'method': 'mul',
+						'require': ['c'],
+						'fnc': function(x, y, c) {
+							return 'ひとふくろに' + x + c['unit'] + 'の' + c['str'] + 'がはいったふくろが' + y
+								+ 'ふくろあります。ぜんぶで' + c['str'] + 'は何' + c['unit'] + 'ありますか。';
+						}
+					},
+					{
+						'method': 'mul',
+						'require': ['c'],
+						'fnc': function(x, y, c) {
+							return '1' + c['unit'] + 'が' + x + '円の' + c['str'] + 'を、' + y + c['unit'] + 'かうためには、何円ひつようですか。';
+						}
+					},
+					{
+						'method': 'mul',
+						'require': [],
+						'fnc': function(x, y) {
+							return '赤いリボンは、' + x + 'cmの黄色いリボンの' + y + 'ばいの長さです。赤いリボンは何cmですか。';
+						}
+					}
+				];
+			},
+			getDivs: function(){
+				return [
+					{
+						'method': 'div',
+						'require': ['c'],
+						'fnc': function(x, y, c) {
+							return x + c['unit'] + 'の' + c['str'] + 'を' + y + '人に同じ数ずつくばろうと思います。1人あたり何'
+								+ c['unit'] + 'あげるとよいですか。';
+						}
+					},
+					{
+						'method': 'div',
+						'require': ['a', 'c'],
+						'fnc': function(x, y, a, c) {
+							return a + 'は、' + x + c['unit'] + 'の' + c['str'] + 'を持っています。' + y
+								+ '個のふくろに同じ数ずつ入れるとき、1つのふくろには何' + c['unit'] + '入っていますか。';
+						}
+					},
+					{
+						'method': 'div',
+						'require': ['c'],
+						'fnc': function(x, y, c) {
+							return a + 'は' + x +'円持っています。1' + c['unit'] + 'が' + y + '円の' + c['str'] + 'は、何'
+								+ c['unit'] + 'かうことができますか。';
+						}
+					},
+					{
+						'method': 'div',
+						'require': ['c'],
+						'fnc': function(x, y, c) {
+							return c['str'] + 'が' + x + c['unit'] + 'あります。' + y + '人に同じ数ずつくばると、一人分は何' + c['unit'] + 'になりますか。';
+						}
+					},
+					{
+						'method': 'div',
+						'require': [],
+						'fnc': function(x, y) {
+							return '花が' + x + '本あります。' + y + '本ずつたばにして花たばをつくります。花たばはいくつできますか。';
+						}
+					},
+					{
+						'method': 'div',
+						'require': [],
+						'fnc': function(x, y) {
+							return '子どもが' + x + '人います。同じ人数ずつ' + y + 'つのチームに分けると1チームは何人になりますか。';
+						}
+					},
+					{
+						'method': 'div',
+						'require': [],
+						'fnc': function(x, y) {
+							return x + 'cmのひもを同じ長さずつ' + y + '本に切り分けます。1本の長さは何cmになりますか。';
+						}
+					},
+					{
+						'method': 'div',
+						'require': [],
+						'fnc': function(x, y) {
+							return x + 'cmの赤いリボンと、' + y + 'cmの黄色いリボンがあります。赤いリボンは黄色いリボンの何ばいの長さですか。';
+						}
+					}
+				];
+			},
+			getItemSrc: function(mode){
+				var me = this;
+				switch(mode) {
+					case 'a':
+						return me._aSet[calcSrc.getRandom(0, me._aSet.length - 1)];
+					case 'b':
+						return me._bSet[calcSrc.getRandom(0, me._bSet.length - 1)];
+					case 'c':
+						return me._cSet[calcSrc.getRandom(0, me._cSet.length - 1)];
+					case 'd':
+						return me._dSet[calcSrc.getRandom(0, me._dSet.length - 1)];
+				}
+				return '';
+			},
+			getQuestions: function(count){
+				var srcs = [];
+				var me = this;
+				if (typeof me.multiFnc === 'function' && me.multiFnc.nodeType !== "number") {
+					$.each(me.getMuls(), function(key,val){
+						srcs.push(val);
+					});
+				}
+				if (typeof me.addFnc === 'function' && me.addFnc.nodeType !== "number") {
+					$.each(me.getAdds(), function(key,val){
+						srcs.push(val);
+					});
+				}
+				if (typeof me.subFnc === 'function' && me.subFnc.nodeType !== "number") {
+					$.each(me.getSubs(), function(key,val){
+						srcs.push(val);
+					});
+				}
+				if (typeof me.divFnc === 'function' && me.divFnc.nodeType !== "number") {
+					$.each(me.getDivs(), function(key,val){
+						srcs.push(val);
+					});
+				}
+				var ret = [];
+				var cnt = srcs.length;
+				for (var i=0; i<count; i++) {
+					ret.push(me._buildQuestion(srcs[calcSrc.getRandom(0, cnt - 1)]));
+				}
+				return ret;
+			},
+			_buildQuestion: function(src){
+				var me = this;
+				var formula = [];
+				switch (src['method']) {
+					case 'div':
+						formula = me.divFnc();
+						break;
+					case 'mul':
+						formula = me.multiFnc();
+						break;
+					case 'add':
+						formula = me.addFnc();
+						break;
+					case 'sub':
+						formula = me.subFnc();
+						break;
+				}
+				var options = [];
+				$.each(src['require'], function(key,val){
+					options.push(me.getItemSrc(val));
+				});
+				var question = '';
+				switch(options.length) {
+					case 0:
+						question = src.fnc(formula[0], formula[2]);
+						break;
+					case 1:
+						question = src.fnc(formula[0], formula[2], options[0]);
+						break;
+					case 2:
+						question = src.fnc(formula[0], formula[2], options[0], options[1]);
+						break;
+					case 3:
+						question = src.fnc(formula[0], formula[2], options[0], options[1], options[2]);
+						break;
+					case 4:
+						question = src.fnc(formula[0], formula[2], options[0], options[1], options[2], options[3]);
+						break;
+				}
+				return {'question':question, 'formula':formula};
+			}
+		};
+		return _skelton;
+	})();
 
 })(jQuery);
 

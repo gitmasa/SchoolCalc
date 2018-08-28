@@ -5,23 +5,25 @@ class BuildSchoolCalc
 {
 
   const JQUERY_FROM_GOOGLE = 0;
+  const COUNTUP_COUNT = 20;
+  const COUNTDOWN_LIMIT = 180;
 
   private $srcPath = __DIR__.'/../src';
   private $templatePath = __DIR__.'/../Templates';
 
   private $deployNames = [
-    ['name'=>'Add1_1', 'js'=>'Add1_1', 'up'=>20, 'down'=>200, 'down_sec'=>180],
-    ['name'=>'Add2_1', 'js'=>'Add2_1', 'up'=>20, 'down'=>200, 'down_sec'=>180],
-    ['name'=>'Add2_2', 'js'=>'Add2_2', 'up'=>20, 'down'=>100, 'down_sec'=>180],
-    ['name'=>'Sub1_1', 'js'=>'Sub1_1', 'up'=>20, 'down'=>200, 'down_sec'=>180],
-    ['name'=>'Sub2_1', 'js'=>'Sub2_1', 'up'=>20, 'down'=>100, 'down_sec'=>180],
-    ['name'=>'Sub2_2', 'js'=>'Sub2_2', 'up'=>20, 'down'=>100, 'down_sec'=>180],
-    ['name'=>'Sub2_max19_1', 'js'=>'Sub2_max19_1', 'up'=>100, 'down'=>100, 'down_sec'=>180],
-    ['name'=>'Mul1_1', 'js'=>'Mul1_1', 'up'=>20, 'down'=>200, 'down_sec'=>180],
-    ['name'=>'Mul1_1_all', 'js'=>'Mul1_1_all', 'up'=>20, 'down'=>200, 'down_sec'=>180],
-    ['name'=>'Mul2_1', 'js'=>'Mul2_1', 'up'=>20, 'down'=>100, 'down_sec'=>180],
-    ['name'=>'Div2_1', 'js'=>'Div2_1', 'up'=>20, 'down'=>100, 'down_sec'=>180],
-    ['name'=>'Div3_1', 'js'=>'Div3_1', 'up'=>20, 'down'=>100, 'down_sec'=>180],
+    ['name'=>'Add1_1', 'js'=>'Add1_1', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Add2_1', 'js'=>'Add2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Add2_2', 'js'=>'Add2_2', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Sub1_1', 'js'=>'Sub1_1', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Sub2_1', 'js'=>'Sub2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Sub2_2', 'js'=>'Sub2_2', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Sub2_max19_1', 'js'=>'Sub2_max19_1', 'up'=>100, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Mul1_1', 'js'=>'Mul1_1', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Mul1_1_all', 'js'=>'Mul1_1_all', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Mul2_1', 'js'=>'Mul2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Div2_1', 'js'=>'Div2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Div3_1', 'js'=>'Div3_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
   ];
 
   public function __construct()
