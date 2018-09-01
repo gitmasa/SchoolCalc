@@ -37,7 +37,8 @@
     var $historyBox = $('#detailbox');
     if (!history.isAllow) {
       $historyBtn.addClass('click_disable');
-    } else {
+    }
+    else {
       $historyBtn.on('click', function(){
         if ($historyBox.hasClass('detailbox_show')) {
           $historyBox.removeClass('detailbox_show');
@@ -73,57 +74,48 @@
 
     var $tgt = $('#targetTable');
     var timer = new calcSrc.classes.CountDownTimer($('#timer'), limitSec);
+
+    var calculator = new calcSrc.classes.Calculator();
+
     var startFnc = function(){
       $tgt.html('');
-      var formulaSet = [];
+      var formulaSet = (function(){
+	var dic = {};
+	var ret = [];
+	for (var i=0;i<questions; i++){
+		while(1) {
+			var tmp = calcSrc.getAdditionWithCarryUp_2digit_1digit();
+			var key = ''+tmp[0]+tmp[1]+tmp[2];
+			if (!dic[key]) {
+				dic[key] = true;
+				ret.push({'mode':'normal','formula':tmp});
+				break;
+			}
+		}
+	}
+	return ret;
+})();
 
-      for (var i=0;i<questions; i++){
-	formulaSet.push(calcSrc.getAdditionWithCarryUp_2digit_1digit());
-}
 
 
-      $.each(formulaSet, function(key,formula){
+
+      $.each(formulaSet, function(key,formulaOrder){
         var index = key+1;
         $tgt.append(
           $('<tr>').addClass('line').append(
             $('<td>').addClass('num').text(''+index),
-            $('<td>').attr({'data-value':formula[0]}).addClass('first').text(formula[0]),
-            $('<td>').attr({'data-value':formula[1]}).addClass('ope').text(formula[1]),
-            $('<td>').attr({'data-value':formula[2]}).addClass('second').text(formula[2]),
-            $('<td>').text('='),
-            $('<td>').append(
-              $('<input type="number" size="5" class="ans">')
-            ),
+            $('<td>').append(calculator.getQuestion(formulaOrder)),
             $('<td>').addClass('result').text('')
           )
         );
       });
 
       timer.start(function(){
-        var $lines = $tgt.find('tr.line');
-        var validCount = 0;
-        $lines.each(function(a, lineRaw){
-          var $line = $(lineRaw);
-          var first = parseInt($line.find('.first').data('value'), 10);
-          var ope = $line.find('.ope').data('value');
-          var second = parseInt($line.find('.second').data('value'), 10);
-          var $ans = $line.find('.ans');
-          $ans.prop('disabled', true);
-          var ans = parseInt($ans.val(), 10);
-          var $result = $line.find('.result');
-          if ((ope === '+' && first+second === ans)
-            || (ope === '-' && first-second === ans)
-            || (ope === '×' && first*second === ans)
-            || (ope === '÷' && parseInt(first/second,10) === ans)
-          ){
-            validCount++;
-            $result.removeClass('ans_err').text('○');
-          } else {
-            $result.addClass('ans_err').text('×');
-          }
-        });
-        history.save(validCount);
-        $('#timer').text('今回の正解数:['+validCount+']問')
+        calculator.check($tgt);
+        $tgt.find('.ans').prop('disabled', true);
+        $tgt.find('.ans2').prop('disabled', true);
+        history.save(calculator.getValidCount());
+        $('#timer').text('今回の正解数:['+calculator.getValidCount()+']問')
       });
     };
 

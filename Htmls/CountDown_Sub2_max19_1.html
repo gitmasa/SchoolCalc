@@ -37,7 +37,8 @@
     var $historyBox = $('#detailbox');
     if (!history.isAllow) {
       $historyBtn.addClass('click_disable');
-    } else {
+    }
+    else {
       $historyBtn.on('click', function(){
         if ($historyBox.hasClass('detailbox_show')) {
           $historyBox.removeClass('detailbox_show');
@@ -73,59 +74,59 @@
 
     var $tgt = $('#targetTable');
     var timer = new calcSrc.classes.CountDownTimer($('#timer'), limitSec);
+
+    var calculator = new calcSrc.classes.Calculator();
+
     var startFnc = function(){
       $tgt.html('');
-      var formulaSet = [];
+      var formulaSet = (function(){
+	var patterns = [
+		[10,1],[10,2],[10,3],[10,4],[10,5],[10,6],[10,7],[10,8],[10,9],
+		[11,1],[11,2],[11,3],[11,4],[11,5],[11,6],[11,7],[11,8],[11,9],
+		[12,1],[12,2],[12,3],[12,4],[12,5],[12,6],[12,7],[12,8],[12,9],
+		[13,1],[13,2],[13,3],[13,4],[13,5],[13,6],[13,7],[13,8],[13,9],
+		[14,1],[14,2],[14,3],[14,4],[14,5],[14,6],[14,7],[14,8],[14,9],
+		[15,1],[15,2],[15,3],[15,4],[15,5],[15,6],[15,7],[15,8],[15,9],
+		[16,1],[16,2],[16,3],[16,4],[16,5],[16,6],[16,7],[16,8],[16,9],
+		[17,1],[17,2],[17,3],[17,4],[17,5],[17,6],[17,7],[17,8],[17,9],
+		[18,1],[18,2],[18,3],[18,4],[18,5],[18,6],[18,7],[18,8],[18,9],
+		[19,1],[19,2],[19,3],[19,4],[19,5],[19,6],[19,7],[19,8],[19,9]
+	];
+	for(var i = patterns.length - 1; i > 0; i--){
+		var r = Math.floor(Math.random() * (i + 1));
+		var tmp = patterns[i];
+		patterns[i] = patterns[r];
+		patterns[r] = tmp;
+	}
+	var ret = [];
+	for (i=0; i<questions; i++){
+		var pos = i;
+		if (i >= patterns.length) {
+			pos = calcSrc.getRandom(0, patterns.length-1);
+		}
+		ret.push({'mode':'normal','formula':[patterns[pos][0], '-', patterns[pos][1]]});
+	}
+	return ret;
+})();
 
-      for (var i=0;i<questions; i++){
-	var a = calcSrc.getRandom(10,19);
-	var b = calcSrc.getRandom(0,9);
-	formulaSet.push([a+'', '-', b+'']);
-}
 
-
-      $.each(formulaSet, function(key,formula){
+      $.each(formulaSet, function(key,formulaOrder){
         var index = key+1;
         $tgt.append(
           $('<tr>').addClass('line').append(
             $('<td>').addClass('num').text(''+index),
-            $('<td>').attr({'data-value':formula[0]}).addClass('first').text(formula[0]),
-            $('<td>').attr({'data-value':formula[1]}).addClass('ope').text(formula[1]),
-            $('<td>').attr({'data-value':formula[2]}).addClass('second').text(formula[2]),
-            $('<td>').text('='),
-            $('<td>').append(
-              $('<input type="number" size="5" class="ans">')
-            ),
+            $('<td>').append(calculator.getQuestion(formulaOrder)),
             $('<td>').addClass('result').text('')
           )
         );
       });
 
       timer.start(function(){
-        var $lines = $tgt.find('tr.line');
-        var validCount = 0;
-        $lines.each(function(a, lineRaw){
-          var $line = $(lineRaw);
-          var first = parseInt($line.find('.first').data('value'), 10);
-          var ope = $line.find('.ope').data('value');
-          var second = parseInt($line.find('.second').data('value'), 10);
-          var $ans = $line.find('.ans');
-          $ans.prop('disabled', true);
-          var ans = parseInt($ans.val(), 10);
-          var $result = $line.find('.result');
-          if ((ope === '+' && first+second === ans)
-            || (ope === '-' && first-second === ans)
-            || (ope === '×' && first*second === ans)
-            || (ope === '÷' && parseInt(first/second,10) === ans)
-          ){
-            validCount++;
-            $result.removeClass('ans_err').text('○');
-          } else {
-            $result.addClass('ans_err').text('×');
-          }
-        });
-        history.save(validCount);
-        $('#timer').text('今回の正解数:['+validCount+']問')
+        calculator.check($tgt);
+        $tgt.find('.ans').prop('disabled', true);
+        $tgt.find('.ans2').prop('disabled', true);
+        history.save(calculator.getValidCount());
+        $('#timer').text('今回の正解数:['+calculator.getValidCount()+']問')
       });
     };
 

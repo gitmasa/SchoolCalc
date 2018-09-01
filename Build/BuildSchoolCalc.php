@@ -23,12 +23,12 @@ class BuildSchoolCalc
     ['name'=>'Mul1_1_all', 'js'=>'Mul1_1_all', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Mul2_1', 'js'=>'Mul2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Div2_1', 'js'=>'Div2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'DivA2_1', 'js'=>'DivA2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Div3_1', 'js'=>'Div3_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
-  ];
-
-  private $deployStoryNames = [
-    ['name'=>'StoryAddSub', 'js'=>'StoryAddSub', 'up'=>5, 'down'=>50, 'down_sec'=>self::COUNTDOWN_LIMIT],
-    ['name'=>'StorySet', 'js'=>'StorySet', 'up'=>5, 'down'=>50, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'StoryAddSub', 'js'=>'StoryAddSub', 'up'=>10, 'down'=>50, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'StorySet', 'js'=>'StorySet', 'up'=>10, 'down'=>50, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'lcm', 'js'=>'lcm2_2', 'up'=>5, 'down'=>30, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'gcd', 'js'=>'gcd', 'up'=>5, 'down'=>30, 'down_sec'=>self::COUNTDOWN_LIMIT],
   ];
 
   public function __construct()
@@ -88,16 +88,12 @@ class BuildSchoolCalc
   {
     $this->deployCountUp($this->deployNames, __DIR__.'/../Templates/CountUp.html', $dstPath, true);
     $this->deployCountDown($this->deployNames, __DIR__.'/../Templates/CountDown.html', $dstPath, true);
-    $this->deployCountUp($this->deployStoryNames, __DIR__.'/../Templates/CountUpStory.html', $dstPath, true);
-//    $this->deployCountDown($this->deployStoryNames, __DIR__.'/../Templates/CountDownStory.html', $dstPath, true);
   }
 
   public function deploy($dstPath)
   {
     $this->deployCountUp($this->deployNames, __DIR__.'/../Templates/CountUp.html', $dstPath, false);
     $this->deployCountDown($this->deployNames, __DIR__.'/../Templates/CountDown.html', $dstPath, false);
-    $this->deployCountUp($this->deployStoryNames, __DIR__.'/../Templates/CountUpStory.html', $dstPath, false);
-//    $this->deployCountDown($this->deployStoryNames, __DIR__.'/../Templates/CountDownStory.html', $dstPath, false);
     file_put_contents($dstPath.'/calc.css', file_get_contents(__DIR__.'/../src/calc.css'));
     file_put_contents($dstPath.'/calcSrc.js', file_get_contents(__DIR__.'/../src/calcSrc.js'));
   }

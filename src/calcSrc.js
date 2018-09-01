@@ -168,6 +168,29 @@ var calcSrc = {};
 		return [a1, '×', a2];
 	};
 
+	calcSrc.getGcd = function(a, b) {
+		var tmp;
+		a = parseInt(a, 10);
+		b = parseInt(b, 10);
+		if (a < b) {
+			tmp = a;
+			a = b;
+			b = tmp;
+		}
+		while ((tmp = a % b) != 0) {
+			a = b;
+			b = tmp;
+		}
+		return b;
+	};
+
+	calcSrc.getLcm = function(a, b) {
+		a = parseInt(a, 10);
+		b = parseInt(b, 10);
+		var gcd = calcSrc.getGcd(a, b);
+		return a * b / gcd;
+
+	};
 
 	calcSrc.classes.CountDownTimer = (function(){
 		var _skelton = function($target, startSec){
@@ -393,7 +416,6 @@ var calcSrc = {};
 		};
 		return _skelton;
 	})();
-
 
 	calcSrc.classes.QuestionBuilder = (function(){
 		var _skelton = function(){
@@ -739,11 +761,270 @@ var calcSrc = {};
 						question = src.fnc(formula[0], formula[2], options[0], options[1], options[2], options[3]);
 						break;
 				}
-				return {'question':question, 'formula':formula};
+				return {'question':question, 'mode':'story', 'formula':formula};
 			}
 		};
 		return _skelton;
 	})();
+
+	calcSrc.countDownChecker = (function(){
+		var _skelton = function(){
+
+		};
+		_skelton.prototype = {
+
+		};
+		return _skelton;
+	})();
+
+	calcSrc.classes.Calculator = (function(){
+		var _skelton = function($parentDom, config){
+			var me = this;
+			var defaultConf = {
+				'questionClass': 'question',
+				'firstOperandClass': 'first',
+				'secondOperandClass': 'second',
+				'firstUnderOperandClass': 'first-under',
+				'secondUnderOperandClass': 'second-under',
+				'operatorClass': 'ope',
+				'firstAnswerClass': 'ans',
+				'secondAnswerClass': 'ans2',
+				'resultClass': 'result',
+				'errAddClass': 'ans_err'
+			};
+			me.config = $.extend(defaultConf, config);
+			me.allQuestionCnt = 0;
+			me.validQuestionCnt = 0;
+			me.invalidQuestionCnt = 0;
+		};
+		_skelton.prototype = {
+			getQuestion: function(order){
+				var me = this;
+				var $ret = $('<div>').addClass(me.config.questionClass);
+				var ope = order.formula[1];
+				if (ope === '+' || ope === '-' || ope === '×' || ope === '÷' || ope === '%'
+					|| ope === 'gcd' || ope === 'lcm' || ope === '+f' || ope === '-f' || ope === '×f' || ope === '÷f') {
+					if (order.mode === 'story') {
+						$ret.addClass('story').append(
+							$('<div>').text(order.question),
+							$('<div>').css('display', 'none').append(
+								$('<span>').attr({'data-value': order.formula[0]}).addClass(me.config.firstOperandClass).text('-'),
+								$('<span>').attr({'data-value': order.formula[1]}).addClass(me.config.operatorClass).text('-'),
+								$('<span>').attr({'data-value': order.formula[2]}).addClass(me.config.secondOperandClass).text('-')
+							),
+							$('<div>').append(
+								$('<input type="number" size="5">').addClass(me.config.firstAnswerClass),
+								$('<span>').addClass(me.config.resultClass).text('')
+							)
+						);
+					} else if (order.mode === 'normal') {
+						var opeStr = ope;
+						var equal = '=';
+						var inputSize = '5';
+						if (ope === 'gcd') {
+							opeStr = 'と';
+							equal = 'の最大公約数は';
+						} else if (ope === 'lcm') {
+							opeStr = 'と';
+							equal = 'の最小公倍数は';
+						} else if (ope === '+f' || ope === '-f' || ope === '×f' || ope === '÷f') {
+							inputSize = '8'
+						}
+						$ret.addClass('normal').append(
+							$('<span>')
+								.attr({'data-value': order.formula[0]})
+								.addClass(me.config.firstOperandClass).text(order.formula[0]),
+							$('<span>')
+								.attr({'data-value': order.formula[1]})
+								.addClass(me.config.operatorClass).text(opeStr),
+							$('<span>')
+								.attr({'data-value': order.formula[2]})
+								.addClass(me.config.secondOperandClass).text(order.formula[2]),
+							$('<span>').addClass('equal').text(equal),
+							$('<input type="number">').attr('size', inputSize).addClass(me.config.firstAnswerClass),
+							$('<span>').addClass(me.config.resultClass).text('')
+						);
+					}
+					return $ret;
+				}
+				else if (ope === '/%') { // 商とあまり
+					$ret.addClass('normal').append(
+						$('<span>')
+							.attr({'data-value': order.formula[0]})
+							.addClass(me.config.firstOperandClass).text(order.formula[0]),
+						$('<span>')
+							.attr({'data-value': order.formula[1]})
+							.addClass(me.config.operatorClass).text('÷'),
+						$('<span>')
+							.attr({'data-value': order.formula[2]})
+							.addClass(me.config.secondOperandClass).text(order.formula[2]),
+						$('<span>').addClass('equal').text('='),
+						$('<input type="number">').attr('size', 5).addClass(me.config.firstAnswerClass),
+						$('<span>').addClass('equal').text('あまり'),
+						$('<input type="number">').attr('size', 5).addClass(me.config.secondAnswerClass),
+						$('<span>').addClass(me.config.resultClass).text('')
+					);
+				}
+				else if (ope === 'floatTofrac') { // 小数 => 分数
+					$ret.addClass('normal').append(
+						$('<div>').addClass('fraction_ope')
+							.attr({'data-value': order.formula[0]}).addClass('fraction_top')
+							.addClass(me.config.firstOperandClass).text(order.formula[0]),
+						$('<div>').addClass('fraction_ope').text('='),
+						$('<div>').addClass('fraction').append(
+							$('<div>').addClass('fraction_top').append(
+								$('<input type="number">').attr('size', 5).addClass(me.config.firstAnswerClass)
+							),
+							$('<div>').addClass('fraction_bottom').append(
+								$('<input type="number">').attr('size', 5).addClass(me.config.secondAnswerClass)
+							)
+						),
+						$('<div>').addClass('fraction_ope').addClass(me.config.resultClass).text('')
+					);
+				}
+				else if (ope === 'fracAdd' || ope === 'fracSub' || ope === 'fracMul' || ope === 'fracDiv') { // 分数 => 分数
+					$ret.addClass('normal').append(
+						$('<div>').addClass('fraction').append(
+							$('<div>')
+								.attr({'data-value': order.formula[0]}).addClass('fraction_top')
+								.addClass(me.config.firstOperandClass).text(order.formula[0]),
+							$('<div>')
+								.attr({'data-value': order.formula[3]}).addClass('fraction_bottom')
+								.addClass(me.config.firstOperandClass).text(order.formula[3])
+						),
+						$('<div>').addClass('fraction_ope')
+							.attr({'data-value': order.formula[1]})
+							.addClass(me.config.operatorClass).text(ope),
+						$('<div>').addClass('fraction').append(
+							$('<div>')
+								.attr({'data-value': order.formula[0]}).addClass('fraction_top')
+								.addClass(me.config.firstOperandClass).text(order.formula[0]),
+							$('<div>')
+								.attr({'data-value': order.formula[3]}).addClass('fraction_bottom')
+								.addClass(me.config.firstOperandClass).text(order.formula[3])
+						),
+						$('<div>').addClass('fraction_ope').text('='),
+						$('<div>').addClass('fraction').append(
+							$('<div>').addClass('fraction_top').append(
+								$('<input type="number">').attr('size', 5).addClass(me.config.firstAnswerClass)
+							),
+							$('<div>').addClass('fraction_bottom').append(
+								$('<input type="number">').attr('size', 5).addClass(me.config.secondAnswerClass)
+							)
+						),
+						$('<div>').addClass('fraction_ope').addClass(me.config.resultClass).text('')
+					);
+				}
+				else if (ope === 'fracTofloat') { // 分数 => 小数
+					$ret.addClass('normal').append(
+						$('<div>').addClass('fraction').append(
+							$('<div>')
+								.attr({'data-value': order.formula[0]}).addClass('fraction_top')
+								.addClass(me.config.firstOperandClass).text(order.formula[0]),
+							$('<div>')
+								.attr({'data-value': order.formula[3]}).addClass('fraction_bottom')
+								.addClass(me.config.firstOperandClass).text(order.formula[3])
+						),
+						$('<div>').addClass('fraction_ope').text('='),
+						$('<div>').addClass('fraction_ope').append(
+							$('<input type="number">').attr('size', 5).addClass(me.config.firstAnswerClass)
+						),
+						$('<div>').addClass('fraction_ope').addClass(me.config.resultClass).text('')
+					);
+				}
+				return $ret;
+			},
+			check: function($parentDom){
+				var me = this;
+				var $lines = $parentDom.find('.'+me.config.questionClass);
+				me.allQuestionCnt = 0;
+				me.validQuestionCnt = 0;
+				me.invalidQuestionCnt = 0;
+				$lines.each(function (a, lineRaw) {
+					me.allQuestionCnt++;
+					var valid = false;
+					var $line = $(lineRaw);
+					var remain = 0;
+					var ope = $line.find('.'+me.config.operatorClass).data('value');
+					var first = $line.find('.'+me.config.firstOperandClass).data('value');
+					var second = $line.find('.'+me.config.secondOperandClass).data('value');
+					var ans1 = $line.find('.'+me.config.firstAnswerClass).val();
+					var ans2 = $line.find('.'+me.config.secondAnswerClass).val();
+					if (ope === '+' || ope === '-' || ope === '×'
+						|| ope === '÷' || ope === '%' || ope === 'gcd' || ope === 'lcm') {
+						first = parseInt(first, 10);
+						second = parseInt(second, 10);
+						ans1 = parseInt(ans1, 10);
+						if (ope === '+') {
+							valid = (first + second) === ans1;
+						} else if (ope === '-') {
+							valid = (first - second) === ans1;
+						} else if (ope === '×') {
+							valid = (first * second) === ans1;
+						} else if (ope === '÷') {
+							valid = (first / second) === ans1;
+						} else if (ope === '%') {
+							valid = (first % second) === ans1;
+						} else if (ope === 'gcd') { // 最大公約数
+							valid = (calcSrc.getGcd(first, second) === ans1);
+						} else if (ope === 'lcm') { // 最小公倍数
+							valid = (calcSrc.getLcm(first, second) === ans1);
+						}
+					}	else if (ope === '+f' || ope === '-f' || ope === '×f'
+							|| ope === '÷f') {
+						first = parseFloat(first);
+						second = parseFloat(second);
+						ans1 = parseFloat(ans1);
+						if (ope === '+f') {
+							valid = (first + second) === ans1;
+						} else if (ope === '-f') {
+							valid = (first - second) === ans1;
+						} else if (ope === '×f') {
+							valid = (first * second) === ans1;
+						} else if (ope === '÷f') {
+							valid = (first / second) === ans1;
+						}
+					} else if (ope === '/%') { // 商とあまり
+						first = parseInt(first, 10);
+						second = parseInt(second, 10);
+						ans1 = parseInt(ans1, 10);
+						ans2 = parseInt(ans2, 10);
+						remain = first % second;
+						valid = ans2 === remain && ans1 === parseInt((first - remain) / second, 10);
+					} else if (ope === 'floatTofrac') { // 小数 => 分数
+
+
+					} else if (ope === 'fracTofloat') { // 分数 => 小数
+
+					}
+					var $result = $line.find('.'+me.config.resultClass);
+					if (valid) {
+						me.validQuestionCnt++;
+						$result.removeClass(me.config.errAddClass).text('○');
+					} else {
+						me.invalidQuestionCnt++;
+						$result.addClass(me.config.errAddClass).text('×');
+					}
+
+				});
+			},
+			getAllCount: function(){
+				return this.allQuestionCnt;
+			},
+			getValidCount: function(){
+				return this.validQuestionCnt;
+			},
+			getInvalidCount: function(){
+				return this.invalidQuestionCnt;
+			},
+			isAllValid: function(){
+				return this.validQuestionCnt === this.allQuestionCnt;
+			}
+		};
+		return _skelton;
+	})();
+
+
 
 })(jQuery);
 
