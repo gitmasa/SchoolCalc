@@ -25,10 +25,13 @@ class BuildSchoolCalc
     ['name'=>'Div2_1', 'js'=>'Div2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'DivA2_1', 'js'=>'DivA2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Div3_1', 'js'=>'Div3_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'Pi_1', 'js'=>'Pi_1', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'FractSimple', 'js'=>'FractSimple', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'ToFractSimple', 'js'=>'ToFractSimple', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'StoryAddSub', 'js'=>'StoryAddSub', 'up'=>10, 'down'=>50, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'StorySet', 'js'=>'StorySet', 'up'=>10, 'down'=>50, 'down_sec'=>self::COUNTDOWN_LIMIT],
-    ['name'=>'lcm', 'js'=>'lcm2_2', 'up'=>5, 'down'=>30, 'down_sec'=>self::COUNTDOWN_LIMIT],
-    ['name'=>'gcd', 'js'=>'gcd', 'up'=>5, 'down'=>30, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'lcm', 'js'=>'lcm2_2', 'up'=>10, 'down'=>30, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'gcd', 'js'=>'gcd', 'up'=>10, 'down'=>30, 'down_sec'=>self::COUNTDOWN_LIMIT],
   ];
 
   public function __construct()
@@ -38,8 +41,10 @@ class BuildSchoolCalc
   private function _getReplaces($isCountDown, $standAlone, $settings)
   {
     $rets = [];
-    $rets['\'{{$jquery}}\''] = (!$standAlone || self::JQUERY_FROM_GOOGLE)
-      ? '<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>'
+    $rets['\'{{$jquery}}\''] = !$standAlone
+      ? (self::JQUERY_FROM_GOOGLE
+        ? '<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>'
+        : '<script src="./jquery.min.js"></script>')
       : '<script type="text/javascript">'."\n".file_get_contents(__DIR__.'/../src/jquery-3.3.1.min.js')."\n".'</script>'."\n";
     $rets['\'{{$script}}\''] = !$standAlone
       ? '<script src="./calcSrc.js"></script>'
@@ -96,6 +101,9 @@ class BuildSchoolCalc
     $this->deployCountDown($this->deployNames, __DIR__.'/../Templates/CountDown.html', $dstPath, false);
     file_put_contents($dstPath.'/calc.css', file_get_contents(__DIR__.'/../src/calc.css'));
     file_put_contents($dstPath.'/calcSrc.js', file_get_contents(__DIR__.'/../src/calcSrc.js'));
+    if (!self::JQUERY_FROM_GOOGLE) {
+      file_put_contents($dstPath.'/jquery.min.js', file_get_contents(__DIR__.'/../src/jquery-3.3.1.min.js'));
+    }
   }
 
 }

@@ -832,6 +832,7 @@ var calcSrc = {};
 						var opeStr = ope;
 						var equal = '=';
 						var inputSize = '5';
+						var inputType = 'number';
 						if (ope === 'gcd') {
 							opeStr = 'と';
 							equal = 'の最大公約数は';
@@ -839,7 +840,9 @@ var calcSrc = {};
 							opeStr = 'と';
 							equal = 'の最小公倍数は';
 						} else if (ope === '+f' || ope === '-f' || ope === '×f' || ope === '÷f') {
-							inputSize = '8'
+							inputType = 'text';
+							inputSize = '8';
+							opeStr = ope.substr(0,1);
 						}
 						$ret.addClass('normal').append(
 							$('<span>')
@@ -852,7 +855,7 @@ var calcSrc = {};
 								.attr({'data-value': order.formula[2]})
 								.addClass(me.config.secondOperandClass).text(order.formula[2]),
 							$('<span>').addClass('equal').text(equal),
-							$('<input type="number">').attr('size', inputSize).addClass(me.config.firstAnswerClass),
+							$('<input type="'+inputType+'">').attr('size', inputSize).addClass(me.config.firstAnswerClass),
 							$('<span>').addClass(me.config.resultClass).text('')
 						);
 					}
@@ -881,7 +884,9 @@ var calcSrc = {};
 						$('<div>').addClass('fraction_ope')
 							.attr({'data-value': order.formula[0]}).addClass('fraction_top')
 							.addClass(me.config.firstOperandClass).text(order.formula[0]),
-						$('<div>').addClass('fraction_ope').text('='),
+						$('<div>').addClass('fraction_ope')
+							.attr({'data-value': order.formula[1]})
+							.addClass(me.config.operatorClass).text('='),
 						$('<div>').addClass('fraction').append(
 							$('<div>').addClass('fraction_top').append(
 								$('<input type="number">').attr('size', 5).addClass(me.config.firstAnswerClass)
@@ -933,12 +938,14 @@ var calcSrc = {};
 								.attr({'data-value': order.formula[0]}).addClass('fraction_top')
 								.addClass(me.config.firstOperandClass).text(order.formula[0]),
 							$('<div>')
-								.attr({'data-value': order.formula[3]}).addClass('fraction_bottom')
-								.addClass(me.config.firstOperandClass).text(order.formula[3])
+								.attr({'data-value': order.formula[2]}).addClass('fraction_bottom')
+								.addClass(me.config.secondOperandClass).text(order.formula[2])
 						),
-						$('<div>').addClass('fraction_ope').text('='),
+						$('<div>').addClass('fraction_ope')
+							.attr({'data-value': order.formula[1]})
+							.addClass(me.config.operatorClass).text('='),
 						$('<div>').addClass('fraction_ope').append(
-							$('<input type="number">').attr('size', 5).addClass(me.config.firstAnswerClass)
+							$('<input type="text">').attr('size', 5).addClass(me.config.firstAnswerClass)
 						),
 						$('<div>').addClass('fraction_ope').addClass(me.config.resultClass).text('')
 					);
@@ -987,13 +994,13 @@ var calcSrc = {};
 						second = parseFloat(second);
 						ans1 = parseFloat(ans1);
 						if (ope === '+f') {
-							valid = (first + second) === ans1;
+							valid = ((first + second) - ans1) < 0.0000001;
 						} else if (ope === '-f') {
-							valid = (first - second) === ans1;
+							valid = ((first - second) - ans1) < 0.0000001;
 						} else if (ope === '×f') {
-							valid = (first * second) === ans1;
+							valid = ((first * second) - ans1) < 0.0000001;
 						} else if (ope === '÷f') {
-							valid = (first / second) === ans1;
+							valid = ((first / second) - ans1) < 0.0000001;
 						}
 					} else if (ope === '/%') { // 商とあまり
 						first = parseInt(first, 10);
@@ -1003,10 +1010,21 @@ var calcSrc = {};
 						remain = first % second;
 						valid = ans2 === remain && ans1 === parseInt((first - remain) / second, 10);
 					} else if (ope === 'floatTofrac') { // 小数 => 分数
-
-
+						var _tmp = String(parseFloat(first)).split('.');
+						if (_tmp[1]) {
+							var _tmp2 = _tmp[1].length;
+							var _tmp3 = Math.pow(10, _tmp2);
+							_tmp2 = parseInt(_tmp[1], 10);
+							_tmp = calcSrc.getGcd(_tmp2, _tmp3);
+							ans1 = parseInt(ans1, 10);
+							ans2 = parseInt(ans2, 10);
+							valid = (ans1 === (_tmp2 / _tmp)) && (ans2 === (_tmp3 / _tmp));
+						}
 					} else if (ope === 'fracTofloat') { // 分数 => 小数
-
+						first = parseFloat(first);
+						second = parseFloat(second);
+						ans1 = parseFloat(ans1);
+						valid = ((first / second) - ans1) < 0.0000001;
 					}
 					var $result = $line.find('.'+me.config.resultClass);
 					if (valid) {
@@ -1199,9 +1217,9 @@ th, td {
 
 	$(document).ready(function(){
 
-		var questions = 5;
+		var questions = 10;
 
-    var history = new calcSrc.classes.ResultDb("cu5__gcd");
+    var history = new calcSrc.classes.ResultDb("cu10__gcd");
     var $historyBtn = $('#showDetail');
     var $historyBox = $('#detailbox');
     var formatMs = function(val){
