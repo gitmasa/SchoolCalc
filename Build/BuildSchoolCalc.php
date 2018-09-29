@@ -28,8 +28,8 @@ class BuildSchoolCalc
     ['name'=>'Pi_1', 'js'=>'Pi_1', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'FractSimple', 'js'=>'FractSimple', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'ToFractSimple', 'js'=>'ToFractSimple', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
-    ['name'=>'StoryAddSub', 'js'=>'StoryAddSub', 'up'=>10, 'down'=>50, 'down_sec'=>self::COUNTDOWN_LIMIT],
-    ['name'=>'StorySet', 'js'=>'StorySet', 'up'=>10, 'down'=>50, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'StoryAddSub', 'js'=>'StoryAddSub', 'up'=>self::COUNTUP_COUNT, 'down'=>50, 'down_sec'=>self::COUNTDOWN_LIMIT],
+    ['name'=>'StorySet', 'js'=>'StorySet', 'up'=>self::COUNTUP_COUNT, 'down'=>50, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'lcm', 'js'=>'lcm2_2', 'up'=>10, 'down'=>30, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'gcd', 'js'=>'gcd', 'up'=>10, 'down'=>30, 'down_sec'=>self::COUNTDOWN_LIMIT],
   ];

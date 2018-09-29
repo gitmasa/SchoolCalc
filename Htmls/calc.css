@@ -126,3 +126,34 @@ th, td {
 #targetTable .result.ans_err {
 	color: #f00;
 }
+
+.question.normal {
+    display:flex;
+    align-items:center;
+    justify-content: center;
+}
+.question .fraction {
+    width: 40px;
+    padding: 0 5px;
+    text-align: center;
+}
+.question .fraction_ans {
+    width: 120px;
+    padding: 0 5px;
+    text-align: center;
+}
+.fraction_ope {
+    min-width: 40px;
+    text-align: center;
+}
+.question .fraction .fraction_top,
+.question .fraction_ans .fraction_top {
+    border-bottom:1px solid #333;
+}
+.question .fraction_ans input {
+    text-align:center;
+}
+.question .fraction .fraction_top,
+.question .fraction .fraction_bottom {
+    text-align: center;
+}

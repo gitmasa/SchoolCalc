@@ -689,6 +689,9 @@ var calcSrc = {};
 					}
 				];
 			},
+			getAmaris: function(){
+
+			},
 			getItemSrc: function(mode){
 				var me = this;
 				switch(mode) {
@@ -887,7 +890,7 @@ var calcSrc = {};
 						$('<div>').addClass('fraction_ope')
 							.attr({'data-value': order.formula[1]})
 							.addClass(me.config.operatorClass).text('='),
-						$('<div>').addClass('fraction').append(
+						$('<div>').addClass('fraction_ans').append(
 							$('<div>').addClass('fraction_top').append(
 								$('<input type="number">').attr('size', 5).addClass(me.config.firstAnswerClass)
 							),
@@ -1190,6 +1193,37 @@ th, td {
 	color: #f00;
 }
 
+.question.normal {
+    display:flex;
+    align-items:center;
+    justify-content: center;
+}
+.question .fraction {
+    width: 40px;
+    padding: 0 5px;
+    text-align: center;
+}
+.question .fraction_ans {
+    width: 120px;
+    padding: 0 5px;
+    text-align: center;
+}
+.fraction_ope {
+    min-width: 40px;
+    text-align: center;
+}
+.question .fraction .fraction_top,
+.question .fraction_ans .fraction_top {
+    border-bottom:1px solid #333;
+}
+.question .fraction_ans input {
+    text-align:center;
+}
+.question .fraction .fraction_top,
+.question .fraction .fraction_bottom {
+    text-align: center;
+}
+
 </style>
 
 </head>
@@ -1217,9 +1251,9 @@ th, td {
 
 	$(document).ready(function(){
 
-		var questions = 10;
+		var questions = 20;
 
-    var history = new calcSrc.classes.ResultDb("cu10__StoryAddSub");
+    var history = new calcSrc.classes.ResultDb("cu20__StoryAddSub");
     var $historyBtn = $('#showDetail');
     var $historyBox = $('#detailbox');
     var formatMs = function(val){

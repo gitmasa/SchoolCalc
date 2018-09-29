@@ -678,6 +678,9 @@ var calcSrc = {};
 					}
 				];
 			},
+			getAmaris: function(){
+
+			},
 			getItemSrc: function(mode){
 				var me = this;
 				switch(mode) {
@@ -876,7 +879,7 @@ var calcSrc = {};
 						$('<div>').addClass('fraction_ope')
 							.attr({'data-value': order.formula[1]})
 							.addClass(me.config.operatorClass).text('='),
-						$('<div>').addClass('fraction').append(
+						$('<div>').addClass('fraction_ans').append(
 							$('<div>').addClass('fraction_top').append(
 								$('<input type="number">').attr('size', 5).addClass(me.config.firstAnswerClass)
 							),
