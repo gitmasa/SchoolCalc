@@ -986,13 +986,18 @@ var calcSrc = {};
 						second = parseFloat(second);
 						ans1 = parseFloat(ans1);
 						if (ope === '+f') {
-							valid = ((first + second) - ans1) < 0.0000001;
+							remain = ((first + second) - ans1);
 						} else if (ope === '-f') {
-							valid = ((first - second) - ans1) < 0.0000001;
+							remain = ((first - second) - ans1);
 						} else if (ope === '×f') {
-							valid = ((first * second) - ans1) < 0.0000001;
+							remain = ((first * second) - ans1);
 						} else if (ope === '÷f') {
-							valid = ((first / second) - ans1) < 0.0000001;
+							remain = ((first / second) - ans1);
+						}
+						if (Math.abs(remain) < 0.0000001) {
+							valid = true;
+						} else {
+							valid = false;
 						}
 					} else if (ope === '/%') { // 商とあまり
 						first = parseInt(first, 10);
