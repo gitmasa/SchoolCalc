@@ -1033,7 +1033,7 @@ var calcSrc = {};
 						first = parseFloat(first);
 						second = parseFloat(second);
 						ans1 = parseFloat(ans1);
-						valid = ((first / second) - ans1) < 0.0000001;
+						valid = Math.abs((first / second) - ans1) < 0.0000001;
 					}
 					var $result = $line.find('.'+me.config.resultClass);
 					if (valid) {
