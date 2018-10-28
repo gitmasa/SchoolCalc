@@ -679,7 +679,24 @@ var calcSrc = {};
 				];
 			},
 			getAmaris: function(){
-
+				return [
+					{
+						'method': '%',
+						'require': ['c'],
+						'fnc': function(x, y, c) {
+							return x + c['unit'] + 'の' + c['str'] + 'を' + y + '人にできるだけ多く同じ数ずつくばろうと思います。配り終わると、何'
+								+ c['unit'] + '残りますか。';
+						}
+					},
+					{
+						'method': '%',
+						'require': ['c'],
+						'fnc': function(x, y, c) {
+							return x + c['unit'] + 'の' + c['str'] + 'を' + y + c['unit'] + 'ずつ1まとめにして、ふくろに入れていくと、あまりは何'
+								+ c['unit'] + 'になりますか。';
+						}
+					}
+				];
 			},
 			getItemSrc: function(mode){
 				var me = this;
