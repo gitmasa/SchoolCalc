@@ -25,7 +25,7 @@
 		if ((calcSrc.getRandom(1,100) % 3) === 0) {
 			add = '1';
 		}
-		ret.push({'mode':'normal','formula':[patterns[pos][0], '×', add+patterns[pos][1]]});
+		ret.push({'mode':'normal','formula':[add+patterns[pos][0], '×', patterns[pos][1]]});
 	}
 	return ret;
 })();
