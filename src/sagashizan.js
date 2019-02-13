@@ -131,29 +131,29 @@
 				// 3, 4, 5
 				// 6, 7, 8
 				var a = numAry;
-				rets['01'] = a[0] + a[1];
-				rets['12'] = a[1] + a[2];
-				rets['34'] = a[3] + a[4];
-				rets['45'] = a[4] + a[5];
-				rets['67'] = a[6] + a[7];
-				rets['78'] = a[7] + a[8];
+				rets['0_1'] = a[0] + a[1];
+				rets['1_2'] = a[1] + a[2];
+				rets['3_4'] = a[3] + a[4];
+				rets['4_5'] = a[4] + a[5];
+				rets['6_7'] = a[6] + a[7];
+				rets['7_8'] = a[7] + a[8];
 
-				rets['03'] = a[0] + a[3];
-				rets['36'] = a[3] + a[6];
-				rets['14'] = a[1] + a[4];
-				rets['47'] = a[4] + a[7];
-				rets['25'] = a[2] + a[5];
-				rets['58'] = a[5] + a[8];
+				rets['0_3'] = a[0] + a[3];
+				rets['3_6'] = a[3] + a[6];
+				rets['1_4'] = a[1] + a[4];
+				rets['4_7'] = a[4] + a[7];
+				rets['2_5'] = a[2] + a[5];
+				rets['5_8'] = a[5] + a[8];
 
-				rets['04'] = a[0] + a[4];
-				rets['24'] = a[2] + a[4];
-				rets['64'] = a[6] + a[4];
-				rets['84'] = a[8] + a[4];
+				rets['0_4'] = a[0] + a[4];
+				rets['2_4'] = a[2] + a[4];
+				rets['6_4'] = a[6] + a[4];
+				rets['8_4'] = a[8] + a[4];
 
-				rets['13'] = a[1] + a[3];
-				rets['51'] = a[5] + a[1];
-				rets['75'] = a[7] + a[5];
-				rets['37'] = a[3] + a[7];
+				rets['1_3'] = a[1] + a[3];
+				rets['5_1'] = a[5] + a[1];
+				rets['7_5'] = a[7] + a[5];
+				rets['3_7'] = a[3] + a[7];
 
 				return rets;
 			},
@@ -161,101 +161,117 @@
 				// abc, def, ghi, adg, beh, cfi, aei, ceg
 				var rets = {};
 				var a = numAry;
-				rets['012'] = a[0] + a[1] + a[2];
-				rets['345'] = a[3] + a[4] + a[5];
-				rets['678'] = a[6] + a[7] + a[8];
-				rets['036'] = a[0] + a[3] + a[6];
-				rets['147'] = a[1] + a[4] + a[7];
-				rets['258'] = a[2] + a[5] + a[8];
-				rets['048'] = a[0] + a[4] + a[8];
-				rets['246'] = a[2] + a[4] + a[6];
+				rets['0_1_2'] = a[0] + a[1] + a[2];
+				rets['3_4_5'] = a[3] + a[4] + a[5];
+				rets['6_7_8'] = a[6] + a[7] + a[8];
+				rets['0_3_6'] = a[0] + a[3] + a[6];
+				rets['1_4_7'] = a[1] + a[4] + a[7];
+				rets['2_5_8'] = a[2] + a[5] + a[8];
+				rets['0_4_8'] = a[0] + a[4] + a[8];
+				rets['2_4_6'] = a[2] + a[4] + a[6];
 				// 012, 345, 678, 036, 147, 258, 048, 246
 
 				// 2x2
 				// 014, 254, 874, 634
-				rets['014'] = a[0] + a[1] + a[4];
-				rets['254'] = a[2] + a[5] + a[4];
-				rets['874'] = a[8] + a[7] + a[4];
-				rets['634'] = a[6] + a[3] + a[4];
+				rets['0_1_4'] = a[0] + a[1] + a[4];
+				rets['2_5_4'] = a[2] + a[5] + a[4];
+				rets['8_7_4'] = a[8] + a[7] + a[4];
+				rets['6_3_4'] = a[6] + a[3] + a[4];
 				// 143, 541, 745, 347
-				rets['143'] = a[1] + a[4] + a[3];
-				rets['541'] = a[5] + a[4] + a[1];
-				rets['745'] = a[7] + a[4] + a[5];
-				rets['347'] = a[3] + a[4] + a[7];
+				rets['1_4_3'] = a[1] + a[4] + a[3];
+				rets['5_4_1'] = a[5] + a[4] + a[1];
+				rets['7_4_5'] = a[7] + a[4] + a[5];
+				rets['3_4_7'] = a[3] + a[4] + a[7];
 				// 430, 412, 458, 476
-				rets['430'] = a[4] + a[3] + a[0];
-				rets['412'] = a[4] + a[1] + a[2];
-				rets['458'] = a[4] + a[5] + a[8];
-				rets['476'] = a[4] + a[7] + a[6];
+				rets['4_3_0'] = a[4] + a[3] + a[0];
+				rets['4_1_2'] = a[4] + a[1] + a[2];
+				rets['4_5_8'] = a[4] + a[5] + a[8];
+				rets['4_7_6'] = a[4] + a[7] + a[6];
 				// 301, 125, 587, 763
-				rets['301'] = a[3] + a[0] + a[1];
-				rets['125'] = a[1] + a[2] + a[5];
-				rets['587'] = a[5] + a[8] + a[7];
-				rets['763'] = a[7] + a[6] + a[3];
+				rets['3_0_1'] = a[3] + a[0] + a[1];
+				rets['1_2_5'] = a[1] + a[2] + a[5];
+				rets['5_8_7'] = a[5] + a[8] + a[7];
+				rets['7_6_3'] = a[7] + a[6] + a[3];
 
 				// 3x2
 				// 037, 213, 851, 675
-				rets['037'] = a[0] + a[3] + a[7];
-				rets['213'] = a[2] + a[1] + a[3];
-				rets['851'] = a[8] + a[5] + a[1];
-				rets['675'] = a[6] + a[7] + a[5];
+				rets['0_3_7'] = a[0] + a[3] + a[7];
+				rets['2_1_3'] = a[2] + a[1] + a[3];
+				rets['8_5_1'] = a[8] + a[5] + a[1];
+				rets['6_7_5'] = a[6] + a[7] + a[5];
 				// 146, 540, 742, 348
-				rets['146'] = a[1] + a[4] + a[6];
-				rets['540'] = a[5] + a[4] + a[0];
-				rets['742'] = a[7] + a[4] + a[2];
-				rets['348'] = a[3] + a[4] + a[8];
+				rets['1_4_6'] = a[1] + a[4] + a[6];
+				rets['5_4_0'] = a[5] + a[4] + a[0];
+				rets['7_4_2'] = a[7] + a[4] + a[2];
+				rets['3_4_8'] = a[3] + a[4] + a[8];
 				// 047, 243, 841, 645
-				rets['047'] = a[0] + a[4] + a[7];
-				rets['243'] = a[2] + a[4] + a[3];
-				rets['841'] = a[8] + a[4] + a[1];
-				rets['645'] = a[6] + a[4] + a[5];
+				rets['0_4_7'] = a[0] + a[4] + a[7];
+				rets['2_4_3'] = a[2] + a[4] + a[3];
+				rets['8_4_1'] = a[8] + a[4] + a[1];
+				rets['6_4_5'] = a[6] + a[4] + a[5];
 				// 136, 510, 752, 378
-				rets['136'] = a[1] + a[3] + a[6];
-				rets['510'] = a[5] + a[1] + a[0];
-				rets['752'] = a[7] + a[5] + a[2];
-				rets['378'] = a[3] + a[7] + a[8];
+				rets['1_3_6'] = a[1] + a[3] + a[6];
+				rets['5_1_0'] = a[5] + a[1] + a[0];
+				rets['7_5_2'] = a[7] + a[5] + a[2];
+				rets['3_7_8'] = a[3] + a[7] + a[8];
 				// 046, 240, 842, 648
-				rets['046'] = a[0] + a[4] + a[6];
-				rets['240'] = a[2] + a[4] + a[0];
-				rets['842'] = a[8] + a[4] + a[2];
-				rets['648'] = a[6] + a[4] + a[8];
+				rets['0_4_6'] = a[0] + a[4] + a[6];
+				rets['2_4_0'] = a[2] + a[4] + a[0];
+				rets['8_4_2'] = a[8] + a[4] + a[2];
+				rets['6_4_8'] = a[6] + a[4] + a[8];
 				// 137, 513, 751, 375
-				rets['137'] = a[1] + a[3] + a[7];
-				rets['513'] = a[5] + a[1] + a[3];
-				rets['751'] = a[7] + a[5] + a[1];
-				rets['375'] = a[3] + a[7] + a[5];
+				rets['1_3_7'] = a[1] + a[3] + a[7];
+				rets['5_1_3'] = a[5] + a[1] + a[3];
+				rets['7_5_1'] = a[7] + a[5] + a[1];
+				rets['3_7_5'] = a[3] + a[7] + a[5];
 
 				return rets;
 			},
 			_calcAll4_2Answers: function(numAry){
 				var rets = {};
-				// 0, 1, 2
-				// 3, 4, 5
-				// 6, 7, 8
 				var a = numAry;
-				rets['01'] = a[0] + a[1];
-				rets['12'] = a[1] + a[2];
-				rets['34'] = a[3] + a[4];
-				rets['45'] = a[4] + a[5];
-				rets['67'] = a[6] + a[7];
-				rets['78'] = a[7] + a[8];
+				rets['0_1'] = a[0] + a[1];
+				rets['1_2'] = a[1] + a[2];
+				rets['2_3'] = a[2] + a[3];
+				rets['4_5'] = a[4] + a[5];
+				rets['5_6'] = a[5] + a[6];
+				rets['6_7'] = a[6] + a[7];
+				rets['8_9'] = a[8] + a[9];
+				rets['9_10'] = a[9] + a[10];
+				rets['10_11'] = a[10] + a[11];
+				rets['12_13'] = a[12] + a[13];
+				rets['13_14'] = a[13] + a[14];
+				rets['14_15'] = a[14] + a[15];
 
-				rets['03'] = a[0] + a[3];
-				rets['36'] = a[3] + a[6];
-				rets['14'] = a[1] + a[4];
-				rets['47'] = a[4] + a[7];
-				rets['25'] = a[2] + a[5];
-				rets['58'] = a[5] + a[8];
+				rets['0_4'] = a[0] + a[4];
+				rets['4_8'] = a[4] + a[8];
+				rets['8_12'] = a[8] + a[12];
+				rets['1_5'] = a[1] + a[5];
+				rets['5_9'] = a[5] + a[9];
+				rets['9_13'] = a[9] + a[13];
+				rets['2_6'] = a[2] + a[6];
+				rets['6_10'] = a[6] + a[10];
+				rets['10_14'] = a[10] + a[14];
+				rets['3_7'] = a[3] + a[7];
+				rets['7_11'] = a[7] + a[11];
+				rets['11_15'] = a[11] + a[15];
 
-				rets['04'] = a[0] + a[4];
-				rets['24'] = a[2] + a[4];
-				rets['64'] = a[6] + a[4];
-				rets['84'] = a[8] + a[4];
-
-				rets['13'] = a[1] + a[3];
-				rets['51'] = a[5] + a[1];
-				rets['75'] = a[7] + a[5];
-				rets['37'] = a[3] + a[7];
+				// 0, 1, 2, 3
+				// 4, 5, 6, 7
+				// 8, 9,10,11
+				//12,13,14,15
+				rets['0_5'] = a[0] + a[5];
+				rets['1_4'] = a[1] + a[4];
+				rets['2_7'] = a[2] + a[7];
+				rets['3_6'] = a[3] + a[6];
+				rets['4_9'] = a[4] + a[9];
+				rets['5_8'] = a[5] + a[8];
+				rets['6_11'] = a[6] + a[11];
+				rets['7_10'] = a[7] + a[10];
+				rets['8_13'] = a[8] + a[13];
+				rets['9_12'] = a[9] + a[12];
+				rets['10_15'] = a[10] + a[15];
+				rets['11_14'] = a[11] + a[14];
 
 				return rets;
 			},
@@ -266,17 +282,16 @@
 				var _calc = function(sets, offset){
 					var i,j;
 					var tmpInt = 0;
-					var key = '';
 					var val = 0;
 					for(i=0;i<sets.length;i++) {
-						key = '';
+						var keys = [];
 						val = 0;
 						for (j=0;j<3;j++) {
 							tmpInt = sets[i][j] + offset;
-							key += '' + tmpInt;
+							keys.push('' + tmpInt);
 							val += numAry[sets[i][j]+offset];
 						}
-						rets[key] = val;
+						rets[keys.join('_')] = val;
 					}
 				};
 				var k;
@@ -395,7 +410,8 @@
 				ansVal = parseInt(ansVal, 10);
 				$.each(chkAry, function(key, val){
 					if (val === ansVal) {
-						results.push([parseInt(key.substr(0,1), 10), parseInt(key.substr(1,1), 10)])
+						var tmps = key.split('_');
+						results.push([parseInt(tmps[0], 10), parseInt(tmps[1], 10)])
 					}
 				});
 				return results;
@@ -407,7 +423,8 @@
 				ansVal = parseInt(ansVal, 10);
 				$.each(chkAry, function(key, val){
 					if (val === ansVal) {
-						results.push([parseInt(key.substr(0,1), 10), parseInt(key.substr(1,1), 10), parseInt(key.substr(2,1), 10)])
+						var tmps = key.split('_');
+						results.push([parseInt(tmps[0], 10), parseInt(tmps[1], 10), parseInt(tmps[2], 10)])
 					}
 				});
 				return results;
@@ -419,7 +436,8 @@
 				ansVal = parseInt(ansVal, 10);
 				$.each(chkAry, function(key, val){
 					if (val === ansVal) {
-						results.push([parseInt(key.substr(0,1), 10), parseInt(key.substr(1,1), 10)])
+						var tmps = key.split('_');
+						results.push([parseInt(tmps[0], 10), parseInt(tmps[1], 10)])
 					}
 				});
 				return results;
@@ -431,7 +449,8 @@
 				ansVal = parseInt(ansVal, 10);
 				$.each(chkAry, function(key, val){
 					if (val === ansVal) {
-						results.push([parseInt(key.substr(0,1), 10), parseInt(key.substr(1,1), 10), parseInt(key.substr(2,1), 10)])
+						var tmps = key.split('_');
+						results.push([parseInt(tmps[0], 10), parseInt(tmps[1], 10), parseInt(tmps[2], 10)])
 					}
 				});
 				return results;
