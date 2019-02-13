@@ -36,6 +36,10 @@ class BuildSchoolCalc
     ['name'=>'gcd', 'js'=>'gcd', 'up'=>10, 'down'=>30, 'down_sec'=>self::COUNTDOWN_LIMIT],
   ];
 
+	private $deploySagashiNames = [
+		['name'=>'sagashi', 'js'=>'', 'up'=>10, 'down'=>30, 'down_sec'=>self::COUNTDOWN_LIMIT],
+	];
+
   public function __construct()
   {
   }
@@ -51,11 +55,16 @@ class BuildSchoolCalc
     $rets['\'{{$script}}\''] = !$standAlone
       ? '<script src="./calcSrc.js"></script>'
       : '<script type="text/javascript">'."\n".file_get_contents(__DIR__.'/../src/calcSrc.js')."\n".'</script>'."\n";
+		$rets['\'{{$script_sagashi}}\''] = !$standAlone
+			? '<script src="./sagashizan.js"></script>'
+			: '<script type="text/javascript">'."\n".file_get_contents(__DIR__.'/../src/sagashizan.js')."\n".'</script>'."\n";
     $rets['\'{{$style}}\''] = !$standAlone
       ? '<link rel="stylesheet" href="./calc.css" type="text/css" media="all"/>'
       : '<style type="text/css">'."\n".file_get_contents(__DIR__.'/../src/calc.css')."\n".'</style>'."\n";
 
-    $rets['\'{{$getFormula}}\''] = file_get_contents(__DIR__.sprintf('/../src/FormulaBuilders/%s.js', $settings['js']));
+    if (strlen($settings['js'])) {
+			$rets['\'{{$getFormula}}\''] = file_get_contents(__DIR__.sprintf('/../src/FormulaBuilders/%s.js', $settings['js']));
+		}
 
     $rets['\'{{$questionCnt}}\''] = $isCountDown ? $settings['down'] : $settings['up'];
     $rets['\'{{$title}}\''] = sprintf('%s__%s',
@@ -90,19 +99,33 @@ class BuildSchoolCalc
       file_put_contents($path, $saveData);
     }
   }
-  
-  public function deployStandAlone($dstPath)
+
+	public function deploySagashi($targets, $template, $dstPath, $standAlone=false)
+	{
+		$template = file_get_contents($template);
+		foreach ($targets as $setting) {
+			$replaces = $this->_getReplaces(false, $standAlone, $setting);
+			$saveData = str_replace(array_keys($replaces), array_values($replaces), $template);
+			$path = sprintf('%s/Sagashizan.html', $dstPath);
+			file_put_contents($path, $saveData);
+		}
+	}
+
+	public function deployStandAlone($dstPath)
   {
     $this->deployCountUp($this->deployNames, __DIR__.'/../Templates/CountUp.html', $dstPath, true);
     $this->deployCountDown($this->deployNames, __DIR__.'/../Templates/CountDown.html', $dstPath, true);
+    $this->deploySagashi($this->deploySagashiNames, __DIR__.'/../Templates/Sagashizan.html', $dstPath, true);
   }
 
   public function deploy($dstPath)
   {
     $this->deployCountUp($this->deployNames, __DIR__.'/../Templates/CountUp.html', $dstPath, false);
     $this->deployCountDown($this->deployNames, __DIR__.'/../Templates/CountDown.html', $dstPath, false);
+		$this->deploySagashi($this->deploySagashiNames, __DIR__.'/../Templates/Sagashizan.html', $dstPath, false);
     file_put_contents($dstPath.'/calc.css', file_get_contents(__DIR__.'/../src/calc.css'));
     file_put_contents($dstPath.'/calcSrc.js', file_get_contents(__DIR__.'/../src/calcSrc.js'));
+		file_put_contents($dstPath.'/sagashizan.js', file_get_contents(__DIR__.'/../src/sagashizan.js'));
     if (!self::JQUERY_FROM_GOOGLE) {
       file_put_contents($dstPath.'/jquery.min.js', file_get_contents(__DIR__.'/../src/jquery-3.3.1.min.js'));
     }

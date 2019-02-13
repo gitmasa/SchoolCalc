@@ -24,6 +24,8 @@
 		var add = '';
 		if ((calcSrc.getRandom(1,100) % 3) === 0) {
 			add = '1';
+		} else if ((calcSrc.getRandom(1,100) % 3) === 1) {
+				add = '2';
 		}
 		ret.push({'mode':'normal','formula':[add+patterns[pos][0], '×', patterns[pos][1]]});
 	}
