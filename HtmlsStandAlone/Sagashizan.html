@@ -11,7 +11,6 @@
 
 	<script type="text/javascript">
 
-
 var calcSrc = {};
 (function($, undefined){
 	calcSrc.classes = {};
@@ -1079,6 +1078,101 @@ var calcSrc = {};
 		return _skelton;
 	})();
 
+	calcSrc.classes.JpRomans = (function(){
+		var skelton = function(){
+
+		};
+		skelton.prototype = {
+			romansDic: {
+				'あ':['a'], 'い':['i'], 'う':['u'], 'え':['e'], 'お':['o'],
+				'か':['ka'], 'き':['ki'], 'く':['ku'], 'け':['ke'], 'こ':['ko'],
+				'さ':['sa'], 'し':['si', 'shi'], 'す':['su'], 'せ':['se'], 'そ':['so'],
+				'た':['ta'], 'ち':['ti', 'thi', 'chi'], 'つ':['tu', 'tsu'], 'て':['te'], 'と':['to'],
+				'な':['na'], 'に':['ni'], 'ぬ':['nu'], 'ね':['ne'], 'の':['no'],
+				'は':['ha'], 'ひ':['hi'], 'ふ':['hu', 'fu'], 'へ':['he'], 'ほ':['ho'],
+				'ま':['ma'], 'み':['mi'], 'む':['mu'], 'め':['me'], 'も':['mo'],
+				'や':['ya'], 'ゆ':['yu'], 'よ':['yo'],
+				'ら':['ra'], 'り':['ri'], 'る':['ru'], 'れ':['re'], 'ろ':['ro'],
+				'わ':['wa'], 'を':['wo', 'o'], 'ん':['nn', 'n'],
+				'が':['ga'], 'ぎ':['gi'], 'ぐ':['gu'], 'げ':['ge'], 'ご':['go'],
+				'ざ':['za'], 'じ':['zi', 'ji'], 'ず':['zu'], 'ぜ':['ze'], 'ぞ':['zo'],
+				'だ':['da'], 'ぢ':['di', 'zi', 'ji'], 'づ':['du', 'zu'], 'で':['de'], 'ど':['do'],
+				'ば':['ba'], 'び':['bi'], 'ぶ':['bu'], 'べ':['be'], 'ぼ':['bo'],
+				'ぱ':['pa'], 'ぴ':['pi'], 'ぷ':['pu'], 'ぺ':['pe'], 'ぽ':['po'],
+				'ぎゃ':['gya'], 'ぎゅ':['gyu'], 'ぎょ':['gyo'],
+				'きゃ':['kya'], 'きゅ':['kyu'], 'きょ':['kyo'],
+				'じゃ':['zya', 'jya', 'ja'], 'じゅ':['zyu', 'jyu', 'ju'], 'じょ':['zyo', 'jyo', 'jo'],
+				'しゃ':['sya', 'sha'], 'しゅ':['syu', 'shu'], 'しょ':['syo', 'sho'],
+				'ちゃ':['tya', 'cha'], 'ちゅ':['tyu', 'chu'], 'ちょ':['tyo', 'cho'],
+				'ぢゃ':['zya', 'jya', 'ja'], 'ぢゅ':['zyu', 'jyu', 'ju'], 'ぢょ':['zyo', 'jyo', 'jo'],
+				'にゃ':['nya'], 'にゅ':['nyu'], 'にょ':['nyo'],
+				'びゃ':['bya'], 'びゅ':['byu'], 'びょ':['byo'],
+				'ぴゃ':['pya'], 'ぴゅ':['pyu'], 'ぴょ':['pyo'],
+				'ひゃ':['hya'], 'ひゅ':['hyu'], 'ひょ':['hyo'],
+				'みゃ':['mya'], 'みゅ':['myu'], 'みょ':['myo'],
+				'りゃ':['rya'], 'りゅ':['ryu'], 'りょ':['ryo']
+			},
+			tsuExcludes:{'あ':1,'い':1,'う':1,'え':1,'お':1,'ん':1,'っ':1},
+			kanas: [],
+			_makeKanas: function(){
+				var me = this;
+				if (me.kanas.length > 0) {
+					return;
+				}
+				$.each(me.romansDic, function(key,val){
+					me.kanas.push(key);
+				});
+			},
+			buildWord: function(len){
+				var me = this;
+				me._makeKanas();
+				len = parseInt(len, 10);
+				if (len < 0 || !len) {
+					len = 1;
+				}
+				if (len > 10) {
+					len = 10;
+				}
+				var kanaLen = me.kanas.length;
+				var ret = '';
+				for (var i=0; i<len; i++) {
+					var rnd = calcSrc.getRandom(0, kanaLen);
+					if (rnd === kanaLen) {
+						//[っ]
+						var preChr = ret.substr(-1);
+						if (me.tsuExcludes[preChr]) {
+							rnd = calcSrc.getRandom(0, kanaLen-1);
+							ret += me.kanas[rnd];
+						} else {
+							ret += 'っ';
+						}
+					} else {
+						ret += me.kanas[rnd];
+					}
+				}
+				return ret;
+			},
+			buildAnswer: function(kanaStr) {
+				var wordLen = kanaStr.length;
+				var rets = [];
+				var i = 0;
+				var preChr = '';
+				var offset = 0;
+				while(i < wordLen) {
+					var chr = kanaStr.substr(i, 1);
+					if (chr === 'っ') {
+						preChr = chr;
+					}
+					if (chr === 'ゃ' || chr === 'ゅ' || chr === 'ょ') {
+
+					}
+					i++;
+				}
+			}
+
+		};
+		return skelton;
+	})();
 
 
 })(jQuery);
@@ -1816,7 +1910,6 @@ th, td {
 		var $question = $('#question');
 
 		var timer = new calcSrc.classes.CountUpTimer($('#timer'));
-		var calculator = new calcSrc.classes.Calculator();
 
 		var $tgt = $('#targetTable');
 		var $ansCheck = $('#anscheck');
@@ -1909,7 +2002,8 @@ th, td {
 				var ansLen = answers.length;
 				if (ansLen !== 0) {
 					if (!obj.isNearly(answers[ansLen - 1], pos)) {
-						window.alert('となりあった場所を選んでください。['+obj.nn+']['+answers[ansLen - 1]+'][_'+pos+']');
+						window.alert('直前に選んだものと、となりあった場所を選んでください。');
+//						window.alert('となりあった場所を選んでください。['+obj.nn+']['+answers[ansLen - 1]+'][_'+pos+']');
 						return;
 					}
 				}
@@ -2015,8 +2109,10 @@ th, td {
 					return;
 				}
 				var fail = false;
+				var ansCnt = 0;
 				$answerBox.find('.rm_one_answer').off('click').css('color', '#ccc');
 				$answerBox.find('table.oneAnswerTable').each(function(){
+					ansCnt++;
 					var tmpSet = [];
 					var $oneTable = $(this);
 					$oneTable.find('.is_hit').each(function(){
@@ -2029,7 +2125,15 @@ th, td {
 						$oneTable.addClass('is_bad');
 					}
 				});
-				window.alert(fail ? '残念。正しくないものがあります。' : '正解です。おつかれさまでした。');
+				if (obj.resultNum !== ansCnt) {
+					var msg = '残念。答えが不足しています。';
+					if (fail) {
+						msg += '答えの中に、正しくないものもあります。'
+					}
+					window.alert(msg);
+				} else {
+					window.alert(fail ? '残念。正しくないものがあります。' : '正解です。おつかれさまでした。');
+				}
 				timer.stop();
 				var counter = 0;
 				var results = obj.getResultSets();

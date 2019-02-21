@@ -106,7 +106,6 @@
 		var $question = $('#question');
 
 		var timer = new calcSrc.classes.CountUpTimer($('#timer'));
-		var calculator = new calcSrc.classes.Calculator();
 
 		var $tgt = $('#targetTable');
 		var $ansCheck = $('#anscheck');
@@ -199,7 +198,8 @@
 				var ansLen = answers.length;
 				if (ansLen !== 0) {
 					if (!obj.isNearly(answers[ansLen - 1], pos)) {
-						window.alert('となりあった場所を選んでください。['+obj.nn+']['+answers[ansLen - 1]+'][_'+pos+']');
+						window.alert('直前に選んだものと、となりあった場所を選んでください。');
+//						window.alert('となりあった場所を選んでください。['+obj.nn+']['+answers[ansLen - 1]+'][_'+pos+']');
 						return;
 					}
 				}
@@ -305,8 +305,10 @@
 					return;
 				}
 				var fail = false;
+				var ansCnt = 0;
 				$answerBox.find('.rm_one_answer').off('click').css('color', '#ccc');
 				$answerBox.find('table.oneAnswerTable').each(function(){
+					ansCnt++;
 					var tmpSet = [];
 					var $oneTable = $(this);
 					$oneTable.find('.is_hit').each(function(){
@@ -319,7 +321,15 @@
 						$oneTable.addClass('is_bad');
 					}
 				});
-				window.alert(fail ? '残念。正しくないものがあります。' : '正解です。おつかれさまでした。');
+				if (obj.resultNum !== ansCnt) {
+					var msg = '残念。答えが不足しています。';
+					if (fail) {
+						msg += '答えの中に、正しくないものもあります。'
+					}
+					window.alert(msg);
+				} else {
+					window.alert(fail ? '残念。正しくないものがあります。' : '正解です。おつかれさまでした。');
+				}
 				timer.stop();
 				var counter = 0;
 				var results = obj.getResultSets();
