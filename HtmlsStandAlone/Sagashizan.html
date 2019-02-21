@@ -2006,6 +2006,12 @@ th, td {
 //						window.alert('となりあった場所を選んでください。['+obj.nn+']['+answers[ansLen - 1]+'][_'+pos+']');
 						return;
 					}
+					for(var i=0;i<ansLen;i++) {
+						if (answers[i] === pos) {
+							window.alert('同じ場所は選べません。');
+							return;
+						}
+					}
 				}
 				answers.push(pos);
 				$me.addClass('is_selected');
@@ -2128,7 +2134,7 @@ th, td {
 				if (obj.resultNum !== ansCnt) {
 					var msg = '残念。答えが不足しています。';
 					if (fail) {
-						msg += '答えの中に、正しくないものもあります。'
+						msg += 'また、答えの中に、正しくないものもあります。'
 					}
 					window.alert(msg);
 				} else {
