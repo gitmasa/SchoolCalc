@@ -10,7 +10,6 @@
 
 	<script type="text/javascript">
 
-
 var calcSrc = {};
 (function($, undefined){
 	calcSrc.classes = {};
@@ -149,6 +148,23 @@ var calcSrc = {};
 			second[0] = tmp;
 		}
 		return [second[0]+''+first[0], '-', second[1]+''+first[1]];
+	};
+
+	calcSrc.getSubtractionWithCarryDown_3digit_2digit = function(){
+		var first = calcSrc.getIntPair(1);
+		var second = calcSrc.getIntPair(1);
+		var tmp = 0;
+		if (first[0] > first[1]) {
+			tmp = first[1];
+			first[1] = first[0];
+			first[0] = tmp;
+		}
+		if (second[0] < second[1]) {
+			tmp = second[1];
+			second[1] = second[0];
+			second[0] = tmp;
+		}
+		return [calcSrc.getRandom(1,9)+''+second[0]+''+first[0], '-', second[1]+''+first[1]];
 	};
 
 	calcSrc.getDivision_2digit_1digit = function(){
@@ -422,28 +438,42 @@ var calcSrc = {};
 				if (tmp === null) {
 					return '-';
 				}
-				return tmp.getFullYear()+'年'+(tmp.getMonth()+1)+'月'+tmp.getDate()+'日 '+tmp.getHours()+':'+tmp.getMinutes();
+				var strMin = ''+tmp.getMinutes();
+				var strHour = ''+tmp.getHours();
+				if (strMin.length === 1) {
+					strMin = '0'+strMin;
+				}
+				if (strHour.length === 1) {
+					strHour = '0'+strHour;
+				}
+				return tmp.getFullYear()+'年'+(tmp.getMonth()+1)+'月'+tmp.getDate()+'日 '+strHour+':'+strMin;
 			}
 		};
 		return _skelton;
 	})();
 
 	calcSrc.classes.QuestionBuilder = (function(){
-		var _skelton = function(){
+		var _skelton = function(level){
 			var me = this;
+			me.level = parseInt(level,10);
+			me.level = me.level ? me.level : 1;
 			me.multiFnc = function(){
-				var a1 = calcSrc.getRandom(2, 9);
-				var a2 = calcSrc.getRandom(2, 9);
+				var a1 = me.level < 2 ? calcSrc.getRandom(2, 9) : calcSrc.getRandom(11, 99);
+				var a2 = me.level < 3 ? calcSrc.getRandom(2, 9) : calcSrc.getRandom(11, 99);
 				return [''+a1, '×', ''+a2];
 			};
 			me.addFnc = function(){
-				return calcSrc.getAdditionWithCarryUp(2);
+				return me.level < 2 ? calcSrc.getAdditionWithCarryUp(2) : calcSrc.getAdditionWithCarryUp(3);
 			};
 			me.subFnc = function(){
-				return calcSrc.getSubtractionWithCarryDown_2digit_2digit();
+				return me.level < 2
+					? calcSrc.getSubtractionWithCarryDown_2digit_2digit()
+					: calcSrc.getSubtractionWithCarryDown_3digit_2digit();
 			};
 			me.divFnc = function(){
-				return calcSrc.getDivision_2digit_1digit();
+				return me.level < 2
+					? calcSrc.getDivision_2digit_1digit()
+					: calcSrc.getDivision_3digit_1digit();
 			};
 		};
 		_skelton.prototype = {
@@ -1078,6 +1108,101 @@ var calcSrc = {};
 		return _skelton;
 	})();
 
+	calcSrc.classes.JpRomans = (function(){
+		var skelton = function(){
+
+		};
+		skelton.prototype = {
+			romansDic: {
+				'あ':['a'], 'い':['i'], 'う':['u'], 'え':['e'], 'お':['o'],
+				'か':['ka'], 'き':['ki'], 'く':['ku'], 'け':['ke'], 'こ':['ko'],
+				'さ':['sa'], 'し':['si', 'shi'], 'す':['su'], 'せ':['se'], 'そ':['so'],
+				'た':['ta'], 'ち':['ti', 'thi', 'chi'], 'つ':['tu', 'tsu'], 'て':['te'], 'と':['to'],
+				'な':['na'], 'に':['ni'], 'ぬ':['nu'], 'ね':['ne'], 'の':['no'],
+				'は':['ha'], 'ひ':['hi'], 'ふ':['hu', 'fu'], 'へ':['he'], 'ほ':['ho'],
+				'ま':['ma'], 'み':['mi'], 'む':['mu'], 'め':['me'], 'も':['mo'],
+				'や':['ya'], 'ゆ':['yu'], 'よ':['yo'],
+				'ら':['ra'], 'り':['ri'], 'る':['ru'], 'れ':['re'], 'ろ':['ro'],
+				'わ':['wa'], 'を':['wo', 'o'], 'ん':['nn', 'n'],
+				'が':['ga'], 'ぎ':['gi'], 'ぐ':['gu'], 'げ':['ge'], 'ご':['go'],
+				'ざ':['za'], 'じ':['zi', 'ji'], 'ず':['zu'], 'ぜ':['ze'], 'ぞ':['zo'],
+				'だ':['da'], 'ぢ':['di', 'zi', 'ji'], 'づ':['du', 'zu'], 'で':['de'], 'ど':['do'],
+				'ば':['ba'], 'び':['bi'], 'ぶ':['bu'], 'べ':['be'], 'ぼ':['bo'],
+				'ぱ':['pa'], 'ぴ':['pi'], 'ぷ':['pu'], 'ぺ':['pe'], 'ぽ':['po'],
+				'ぎゃ':['gya'], 'ぎゅ':['gyu'], 'ぎょ':['gyo'],
+				'きゃ':['kya'], 'きゅ':['kyu'], 'きょ':['kyo'],
+				'じゃ':['zya', 'jya', 'ja'], 'じゅ':['zyu', 'jyu', 'ju'], 'じょ':['zyo', 'jyo', 'jo'],
+				'しゃ':['sya', 'sha'], 'しゅ':['syu', 'shu'], 'しょ':['syo', 'sho'],
+				'ちゃ':['tya', 'cha'], 'ちゅ':['tyu', 'chu'], 'ちょ':['tyo', 'cho'],
+				'ぢゃ':['zya', 'jya', 'ja'], 'ぢゅ':['zyu', 'jyu', 'ju'], 'ぢょ':['zyo', 'jyo', 'jo'],
+				'にゃ':['nya'], 'にゅ':['nyu'], 'にょ':['nyo'],
+				'びゃ':['bya'], 'びゅ':['byu'], 'びょ':['byo'],
+				'ぴゃ':['pya'], 'ぴゅ':['pyu'], 'ぴょ':['pyo'],
+				'ひゃ':['hya'], 'ひゅ':['hyu'], 'ひょ':['hyo'],
+				'みゃ':['mya'], 'みゅ':['myu'], 'みょ':['myo'],
+				'りゃ':['rya'], 'りゅ':['ryu'], 'りょ':['ryo']
+			},
+			tsuExcludes:{'あ':1,'い':1,'う':1,'え':1,'お':1,'ん':1,'っ':1},
+			kanas: [],
+			_makeKanas: function(){
+				var me = this;
+				if (me.kanas.length > 0) {
+					return;
+				}
+				$.each(me.romansDic, function(key,val){
+					me.kanas.push(key);
+				});
+			},
+			buildWord: function(len){
+				var me = this;
+				me._makeKanas();
+				len = parseInt(len, 10);
+				if (len < 0 || !len) {
+					len = 1;
+				}
+				if (len > 10) {
+					len = 10;
+				}
+				var kanaLen = me.kanas.length;
+				var ret = '';
+				for (var i=0; i<len; i++) {
+					var rnd = calcSrc.getRandom(0, kanaLen);
+					if (rnd === kanaLen) {
+						//[っ]
+						var preChr = ret.substr(-1);
+						if (me.tsuExcludes[preChr]) {
+							rnd = calcSrc.getRandom(0, kanaLen-1);
+							ret += me.kanas[rnd];
+						} else {
+							ret += 'っ';
+						}
+					} else {
+						ret += me.kanas[rnd];
+					}
+				}
+				return ret;
+			},
+			buildAnswer: function(kanaStr) {
+				var wordLen = kanaStr.length;
+				var rets = [];
+				var i = 0;
+				var preChr = '';
+				var offset = 0;
+				while(i < wordLen) {
+					var chr = kanaStr.substr(i, 1);
+					if (chr === 'っ') {
+						preChr = chr;
+					}
+					if (chr === 'ゃ' || chr === 'ゅ' || chr === 'ょ') {
+
+					}
+					i++;
+				}
+			}
+
+		};
+		return skelton;
+	})();
 
 
 })(jQuery);
@@ -1273,9 +1398,9 @@ th, td {
 
 	$(document).ready(function(){
 
-		var questions = 20;
+		var questions = 10;
 
-    var history = new calcSrc.classes.ResultDb("cu20__Add2_1");
+    var history = new calcSrc.classes.ResultDb("cu10__Add2_1");
     var $historyBtn = $('#showDetail');
     var $historyBox = $('#detailbox');
     var formatMs = function(val){

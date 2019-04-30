@@ -13,45 +13,13 @@
 <div id="target">
 	<div id="header">
 		<div id="timer">00:00</div>
-		<div id="settings">
-			<div>
-				<span>サイズ：</span>
-				<select name="n_n" id="select_nn">
-					<option value="3" selected="selected">3x3</option>
-					<option value="4">4x4</option>
-				</select>
-			</div>
-			<div>
-				<span>選択数：</span>
-				<select name="choice" id="select_choice">
-					<option value="3" selected="selected">3マス</option>
-					<option value="2">2マス</option>
-				</select>
-			</div>
-			<div>
-				<span>答えの数：</span>
-				<select name="resultcnt" id="select_resultcnt">
-					<option value="1">1個</option>
-					<option value="2">2個</option>
-					<option value="3" selected="selected">3個</option>
-					<option value="4">4個</option>
-				</select>
-			</div>
-			<div>
-				<span>数字種類：</span>
-				<select name="uniqcnt" id="select_uniqcnt">
-					<option value="5">5種類</option>
-					<option value="6">6種類</option>
-					<option value="7" selected="selected">7種類</option>
-					<option value="8">8種類</option>
-					<option value="9">9種類</option>
-				</select>
-			</div>
-		</div>
+
 		<div id="detailButtons">
 			<input type="button" value="開始" id="startTest"/>
+			<input type="button" value="成績" id="showDetail"/>
 		</div>
 	</div>
+	<div id="detailbox"></div>
 	<div id="question" style="display:none;">
 		たて、よこ、ななめのとなりあった<span id="question_choice">**</span>つの数字を足すと、
 		<span id="question_result">**</span>になるものが<span id="question_resultcnt">**</span>つあります。
@@ -99,10 +67,54 @@
 
 	$(document).ready(function(){
 
-		var $select_nn = $('#select_nn');
-		var $select_choice = $('#select_choice');
-		var $select_resultcnt = $('#select_resultcnt');
-		var $select_uniqcnt = $('#select_uniqcnt');
+
+		var history = new calcSrc.classes.ResultDb("sagashizan_43");
+		var $historyBtn = $('#showDetail');
+		var $historyBox = $('#detailbox');
+		var formatMs = function(val){
+			if (!val) {
+				return '--:--';
+			}
+			var _sec = val % 60;
+			var _min = (val - _sec) / 60;
+			return (_min < 10 ? '0' : '')+_min.toString()+':'+(_sec < 10 ? '0' : '')+_sec.toString();
+		};
+		if (!history.isAllow) {
+			$historyBtn.addClass('click_disable');
+		}
+		else {
+			$historyBtn.on('click', function(){
+				if ($historyBox.hasClass('detailbox_show')) {
+					$historyBox.removeClass('detailbox_show');
+					return;
+				}
+				$historyBox.addClass('detailbox_show');
+				var minInfo = history.getMin();
+				var summaries = history.getRecent(10);
+				$historyBox.html('');
+				var $hisTable = $('<table>');
+				$.each(summaries, function(key, val){
+					$hisTable.append(
+						$('<tr>').append(
+							$('<td>').text(history.formatTime(val['dt'])),
+							$('<td>').addClass('table_result').text(formatMs(val['value']))
+						)
+					);
+				});
+				$historyBox.append(
+					$('<div>').append(
+						$('<span>').addClass('result_max').text('最高：'+ formatMs(minInfo['value']) + ''),
+						$('<span>').addClass('result_max').text('('+history.formatTime(minInfo['dt'])+')'),
+						$('<input type="button" value="消去" class="result_remove">')
+					),
+					$hisTable
+				);
+				$historyBox.find('.result_remove').on('click', function(){
+					$historyBox.removeClass('detailbox_show');
+					history.clear();
+				});
+			});
+		}
 
 		var $question_choice = $('#question_choice');
 		var $question_result = $('#question_result');
@@ -343,6 +355,9 @@
 					window.alert(fail ? '残念。正しくないものがあります。' : '正解です。おつかれさまでした。');
 				}
 				timer.stop();
+				if (!fail) {
+					history.save(timer.result);
+				}
 				var counter = 0;
 				var results = obj.getResultSets();
 				var $tds = $tgt.find('td');
@@ -362,18 +377,6 @@
 					});
 					counter++;
 				}, 2*1000);
-
-
-
-
-/*
-				calculator.check($tgt);
-				if (calculator.isAllValid()) {
-					$tgt.find('.ans').prop('disabled', true);
-					$tgt.find('.ans2').prop('disabled', true);
-					history.save(timer.result);
-				}
-*/
 			});
 			timer.start();
 		};
@@ -383,13 +386,10 @@
 				clearInterval(intId);
 			}
 			$ansCheck.off('click');
-			var nn = parseInt($select_nn.val(), 10);
-			var choice = parseInt($select_choice.val(), 10);
-			var resultcnt = parseInt($select_resultcnt.val(), 10);
-			var uniqcnt = parseInt($select_uniqcnt.val(), 10);
-			if (choice === 2 && resultcnt > 3) {
-				window.alert('２つを選ぶ場合は、回答数は3つまでしか選べません。');
-			}
+			var nn = 4;
+			var choice = 3;
+			var resultcnt = 3;
+			var uniqcnt = 8;
 			var obj = new calcSrc.classes.Sagashizan(nn, choice, resultcnt, uniqcnt);
 			startFnc(obj);
 		});

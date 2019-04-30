@@ -64,15 +64,19 @@
 	<div><input type="button" value="答え合わせ" id="anscheck"/></div>
 	<style type="text/css">
 		#targetTable td {
-			width:25px;
-			height:25px;
+			width:60px;
+			height:60px;
 			text-align: center;
 			vertical-align: middle;
+			font-size: 24px;
+			border:1px solid #ddd;
 		}
 		#answers td {
 			width:20px;
 			height:20px;
 			border:1px solid #ccc;
+			text-align: center;
+			vertical-align: middle;
 		}
 		td.is_hit {
 			background-color: #fcc;
@@ -112,7 +116,8 @@
 		var $answerBox = $('#answers');
 
 
-		var getAnswerBox = function(nn, results){
+		var getAnswerBox = function(obj, results){
+			var nn = obj.nn;
 			var max = (nn === 3) ? 9 : 16;
 			var chks = [];
 			var dic = {};
@@ -124,50 +129,51 @@
 				chks[i] = !!dic['_'+i];
 			}
 			var $table = $('<table>').addClass('oneAnswerTable');
+			var item = obj.getValidSet();
 			if (nn === 3) {
 				$table.append(
 					$('<tr>').append(
-						$('<td>').html('&nbsp;').data('pos', 0).addClass(chks[0] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').html('&nbsp;').data('pos', 1).addClass(chks[1] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').html('&nbsp;').data('pos', 2).addClass(chks[2] ? 'is_hit' : 'is_no_hit')
+						$('<td>').html('&nbsp;').data('pos', 0).addClass(chks[0] ? 'is_hit' : 'is_no_hit').text(''+item[0]),
+						$('<td>').html('&nbsp;').data('pos', 1).addClass(chks[1] ? 'is_hit' : 'is_no_hit').text(''+item[1]),
+						$('<td>').html('&nbsp;').data('pos', 2).addClass(chks[2] ? 'is_hit' : 'is_no_hit').text(''+item[2])
 					),
 					$('<tr>').append(
-						$('<td>').html('&nbsp;').data('pos', 3).addClass(chks[3] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').html('&nbsp;').data('pos', 4).addClass(chks[4] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').html('&nbsp;').data('pos', 5).addClass(chks[5] ? 'is_hit' : 'is_no_hit')
+						$('<td>').html('&nbsp;').data('pos', 3).addClass(chks[3] ? 'is_hit' : 'is_no_hit').text(''+item[3]),
+						$('<td>').html('&nbsp;').data('pos', 4).addClass(chks[4] ? 'is_hit' : 'is_no_hit').text(''+item[4]),
+						$('<td>').html('&nbsp;').data('pos', 5).addClass(chks[5] ? 'is_hit' : 'is_no_hit').text(''+item[5])
 					),
 					$('<tr>').append(
-						$('<td>').html('&nbsp;').data('pos', 6).addClass(chks[6] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').html('&nbsp;').data('pos', 7).addClass(chks[7] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').html('&nbsp;').data('pos', 8).addClass(chks[8] ? 'is_hit' : 'is_no_hit')
+						$('<td>').html('&nbsp;').data('pos', 6).addClass(chks[6] ? 'is_hit' : 'is_no_hit').text(''+item[6]),
+						$('<td>').html('&nbsp;').data('pos', 7).addClass(chks[7] ? 'is_hit' : 'is_no_hit').text(''+item[7]),
+						$('<td>').html('&nbsp;').data('pos', 8).addClass(chks[8] ? 'is_hit' : 'is_no_hit').text(''+item[8])
 					)
 				);
 			}
 			else {
 				$table.append(
 					$('<tr>').append(
-						$('<td>').text(' ').data('pos', 0).addClass(chks[0] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').text(' ').data('pos', 1).addClass(chks[1] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').text(' ').data('pos', 2).addClass(chks[2] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').text(' ').data('pos', 3).addClass(chks[3] ? 'is_hit' : 'is_no_hit')
+						$('<td>').text(' ').data('pos', 0).addClass(chks[0] ? 'is_hit' : 'is_no_hit').text(''+item[0]),
+						$('<td>').text(' ').data('pos', 1).addClass(chks[1] ? 'is_hit' : 'is_no_hit').text(''+item[1]),
+						$('<td>').text(' ').data('pos', 2).addClass(chks[2] ? 'is_hit' : 'is_no_hit').text(''+item[2]),
+						$('<td>').text(' ').data('pos', 3).addClass(chks[3] ? 'is_hit' : 'is_no_hit').text(''+item[3])
 					),
 					$('<tr>').append(
-						$('<td>').text(' ').data('pos', 4).addClass(chks[4] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').text(' ').data('pos', 5).addClass(chks[5] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').text(' ').data('pos', 6).addClass(chks[6] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').text(' ').data('pos', 7).addClass(chks[7] ? 'is_hit' : 'is_no_hit')
+						$('<td>').text(' ').data('pos', 4).addClass(chks[4] ? 'is_hit' : 'is_no_hit').text(''+item[4]),
+						$('<td>').text(' ').data('pos', 5).addClass(chks[5] ? 'is_hit' : 'is_no_hit').text(''+item[5]),
+						$('<td>').text(' ').data('pos', 6).addClass(chks[6] ? 'is_hit' : 'is_no_hit').text(''+item[6]),
+						$('<td>').text(' ').data('pos', 7).addClass(chks[7] ? 'is_hit' : 'is_no_hit').text(''+item[7])
 					),
 					$('<tr>').append(
-						$('<td>').text(' ').data('pos', 8).addClass(chks[8] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').text(' ').data('pos', 9).addClass(chks[9] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').text(' ').data('pos', 10).addClass(chks[10] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').text(' ').data('pos', 11).addClass(chks[11] ? 'is_hit' : 'is_no_hit')
+						$('<td>').text(' ').data('pos', 8).addClass(chks[8] ? 'is_hit' : 'is_no_hit').text(''+item[8]),
+						$('<td>').text(' ').data('pos', 9).addClass(chks[9] ? 'is_hit' : 'is_no_hit').text(''+item[9]),
+						$('<td>').text(' ').data('pos', 10).addClass(chks[10] ? 'is_hit' : 'is_no_hit').text(''+item[10]),
+						$('<td>').text(' ').data('pos', 11).addClass(chks[11] ? 'is_hit' : 'is_no_hit').text(''+item[11])
 					),
 					$('<tr>').append(
-						$('<td>').data('pos', 12).addClass(chks[12] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').data('pos', 13).addClass(chks[13] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').data('pos', 14).addClass(chks[14] ? 'is_hit' : 'is_no_hit'),
-						$('<td>').data('pos', 15).addClass(chks[15] ? 'is_hit' : 'is_no_hit')
+						$('<td>').data('pos', 12).addClass(chks[12] ? 'is_hit' : 'is_no_hit').text(''+item[12]),
+						$('<td>').data('pos', 13).addClass(chks[13] ? 'is_hit' : 'is_no_hit').text(''+item[13]),
+						$('<td>').data('pos', 14).addClass(chks[14] ? 'is_hit' : 'is_no_hit').text(''+item[14]),
+						$('<td>').data('pos', 15).addClass(chks[15] ? 'is_hit' : 'is_no_hit').text(''+item[15])
 					)
 				);
 			}
@@ -230,7 +236,7 @@
 						answers = [];
 						return;
 					}
-					var $answer = getAnswerBox(obj.nn, answers);
+					var $answer = getAnswerBox(obj, answers);
 					$answerBox.append($answer);
 					$answer.find('.rm_one_answer').on('click', function(){
 						$answer.remove();
