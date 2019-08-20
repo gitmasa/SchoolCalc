@@ -1,0 +1,152 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+	<script src="./jquery.min.js"></script>
+	<script src="./calcSrc.js"></script>
+	<link rel="stylesheet" href="./calc.css" type="text/css" media="all"/>
+</head>
+<body>
+
+<div id="target">
+  <div id="header">
+    <div id="timer">00:00</div>
+    <div id="detailButtons">
+      <input type="button" value="テスト開始" id="startTest"/>
+      <input type="button" value="成績" id="showDetail"/>
+    </div>
+  </div>
+  <div id="detailbox"></div>
+	<table id="targetTable">
+	</table>
+	<div id="buttons">
+		<input type="button" id="anscheck" value="答え合わせ"/>
+	</div>
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+		var questions = 10;
+
+    var history = new calcSrc.classes.ResultDb("cu10__lcm");
+    var $historyBtn = $('#showDetail');
+    var $historyBox = $('#detailbox');
+    var formatMs = function(val){
+      if (!val) {
+        return '--:--';
+      }
+      var _sec = val % 60;
+      var _min = (val - _sec) / 60;
+      return (_min < 10 ? '0' : '')+_min.toString()+':'+(_sec < 10 ? '0' : '')+_sec.toString();
+    };
+    if (!history.isAllow) {
+      $historyBtn.addClass('click_disable');
+    }
+    else {
+      $historyBtn.on('click', function(){
+        if ($historyBox.hasClass('detailbox_show')) {
+          $historyBox.removeClass('detailbox_show');
+          return;
+        }
+        $historyBox.addClass('detailbox_show');
+        var minInfo = history.getMin();
+        var summaries = history.getRecent(10);
+        $historyBox.html('');
+        var $hisTable = $('<table>');
+        $.each(summaries, function(key, val){
+          $hisTable.append(
+            $('<tr>').append(
+              $('<td>').text(history.formatTime(val['dt'])),
+              $('<td>').addClass('table_result').text(formatMs(val['value']))
+            )
+          );
+        });
+        $historyBox.append(
+          $('<div>').append(
+            $('<span>').addClass('result_max').text('最高：'+ formatMs(minInfo['value']) + ''),
+            $('<span>').addClass('result_max').text('('+history.formatTime(minInfo['dt'])+')'),
+            $('<input type="button" value="消去" class="result_remove">')
+          ),
+          $hisTable
+        );
+        $historyBox.find('.result_remove').on('click', function(){
+          $historyBox.removeClass('detailbox_show');
+          history.clear();
+        });
+      });
+    }
+
+    var timer = new calcSrc.classes.CountUpTimer($('#timer'));
+
+    var calculator = new calcSrc.classes.Calculator();
+
+		var $tgt = $('#targetTable');
+    var $ansCheck = $('#anscheck');
+    var startFnc = function() {
+
+      $ansCheck.off('click');
+      $tgt.html('');
+
+      var formulaSet = (function(){
+	var dic = {};
+	var ret = [];
+	for (var i=0;i<questions; i++){
+		while(1) {
+			var tmp = [];
+			tmp.push(calcSrc.getRandom(8,30));
+			tmp.push('lcm');
+			tmp.push(calcSrc.getRandom(4,30));
+			if (tmp[0] === tmp[2]) {
+				continue;
+			}
+			var key = ''+tmp[0]+tmp[1]+tmp[2];
+			if (!dic[key]) {
+				dic[key] = true;
+				ret.push({'mode':'normal','formula':tmp});
+				break;
+			}
+		}
+	}
+	return ret;
+})();
+
+
+      $.each(formulaSet, function (key, formulaOrder) {
+        var index = key + 1;
+        $tgt.append(
+          $('<tr>').addClass('line').append(
+            $('<td>').addClass('num').text('' + index),
+            $('<td>').append(calculator.getQuestion(formulaOrder))
+          )
+        );
+      });
+
+      $ansCheck.on('click', function () {
+        if (timer.isStopped()) {
+          return;
+        }
+        calculator.check($tgt);
+        if (calculator.isAllValid()) {
+          $tgt.find('.ans').prop('disabled', true);
+          $tgt.find('.ans2').prop('disabled', true);
+          timer.stop();
+          history.save(timer.result);
+        }
+      });
+      timer.start();
+    };
+
+    $('#startTest').on('click', function(){
+      startFnc();
+    });
+
+
+  });
+
+</script>
+
+</html>

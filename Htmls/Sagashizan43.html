@@ -1,0 +1,402 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="./jquery.min.js"></script>
+	<script src="./calcSrc.js"></script>
+	<script src="./sagashizan.js"></script>
+	<link rel="stylesheet" href="./calc.css" type="text/css" media="all"/>
+</head>
+<body>
+
+<div id="target">
+	<div id="header">
+		<div id="timer">00:00</div>
+
+		<div id="detailButtons">
+			<input type="button" value="開始" id="startTest"/>
+			<input type="button" value="成績" id="showDetail"/>
+		</div>
+	</div>
+	<div id="detailbox"></div>
+	<div id="question" style="display:none;">
+		たて、よこ、ななめのとなりあった<span id="question_choice">**</span>つの数字を足すと、
+		<span id="question_result">**</span>になるものが<span id="question_resultcnt">**</span>つあります。
+		それを探してください。
+	</div>
+	<table id="targetTable">
+	</table>
+	<div id="answers">
+	</div>
+	<div><input type="button" value="答え合わせ" id="anscheck"/></div>
+	<style type="text/css">
+		#targetTable td {
+			width:60px;
+			height:60px;
+			text-align: center;
+			vertical-align: middle;
+			font-size: 24px;
+			border:1px solid #ddd;
+		}
+		#answers td {
+			width:20px;
+			height:20px;
+			border:1px solid #ccc;
+			text-align: center;
+			vertical-align: middle;
+		}
+		td.is_hit {
+			background-color: #fcc;
+		}
+		td.is_selected {
+			background-color: #fcc;
+		}
+		table.is_ok td.is_no_hit {
+			background-color: #ccf;
+		}
+		table.is_bad td.is_no_hit {
+			background-color: #ffc;
+		}
+	</style>
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+
+		var history = new calcSrc.classes.ResultDb("sagashizan_43");
+		var $historyBtn = $('#showDetail');
+		var $historyBox = $('#detailbox');
+		var formatMs = function(val){
+			if (!val) {
+				return '--:--';
+			}
+			var _sec = val % 60;
+			var _min = (val - _sec) / 60;
+			return (_min < 10 ? '0' : '')+_min.toString()+':'+(_sec < 10 ? '0' : '')+_sec.toString();
+		};
+		if (!history.isAllow) {
+			$historyBtn.addClass('click_disable');
+		}
+		else {
+			$historyBtn.on('click', function(){
+				if ($historyBox.hasClass('detailbox_show')) {
+					$historyBox.removeClass('detailbox_show');
+					return;
+				}
+				$historyBox.addClass('detailbox_show');
+				var minInfo = history.getMin();
+				var summaries = history.getRecent(10);
+				$historyBox.html('');
+				var $hisTable = $('<table>');
+				$.each(summaries, function(key, val){
+					$hisTable.append(
+						$('<tr>').append(
+							$('<td>').text(history.formatTime(val['dt'])),
+							$('<td>').addClass('table_result').text(formatMs(val['value']))
+						)
+					);
+				});
+				$historyBox.append(
+					$('<div>').append(
+						$('<span>').addClass('result_max').text('最高：'+ formatMs(minInfo['value']) + ''),
+						$('<span>').addClass('result_max').text('('+history.formatTime(minInfo['dt'])+')'),
+						$('<input type="button" value="消去" class="result_remove">')
+					),
+					$hisTable
+				);
+				$historyBox.find('.result_remove').on('click', function(){
+					$historyBox.removeClass('detailbox_show');
+					history.clear();
+				});
+			});
+		}
+
+		var $question_choice = $('#question_choice');
+		var $question_result = $('#question_result');
+		var $question_resultcnt = $('#question_resultcnt');
+		var $question = $('#question');
+
+		var timer = new calcSrc.classes.CountUpTimer($('#timer'));
+
+		var $tgt = $('#targetTable');
+		var $ansCheck = $('#anscheck');
+		var $answerBox = $('#answers');
+
+
+		var getAnswerBox = function(obj, results){
+			var nn = obj.nn;
+			var max = (nn === 3) ? 9 : 16;
+			var chks = [];
+			var dic = {};
+			var i;
+			for (i=0; i<results.length; i++) {
+				dic['_'+results[i]] = true;
+			}
+			for (i=0; i<max; i++) {
+				chks[i] = !!dic['_'+i];
+			}
+			var $table = $('<table>').addClass('oneAnswerTable');
+			var item = obj.getValidSet();
+			if (nn === 3) {
+				$table.append(
+					$('<tr>').append(
+						$('<td>').html('&nbsp;').data('pos', 0).addClass(chks[0] ? 'is_hit' : 'is_no_hit').text(''+item[0]),
+						$('<td>').html('&nbsp;').data('pos', 1).addClass(chks[1] ? 'is_hit' : 'is_no_hit').text(''+item[1]),
+						$('<td>').html('&nbsp;').data('pos', 2).addClass(chks[2] ? 'is_hit' : 'is_no_hit').text(''+item[2])
+					),
+					$('<tr>').append(
+						$('<td>').html('&nbsp;').data('pos', 3).addClass(chks[3] ? 'is_hit' : 'is_no_hit').text(''+item[3]),
+						$('<td>').html('&nbsp;').data('pos', 4).addClass(chks[4] ? 'is_hit' : 'is_no_hit').text(''+item[4]),
+						$('<td>').html('&nbsp;').data('pos', 5).addClass(chks[5] ? 'is_hit' : 'is_no_hit').text(''+item[5])
+					),
+					$('<tr>').append(
+						$('<td>').html('&nbsp;').data('pos', 6).addClass(chks[6] ? 'is_hit' : 'is_no_hit').text(''+item[6]),
+						$('<td>').html('&nbsp;').data('pos', 7).addClass(chks[7] ? 'is_hit' : 'is_no_hit').text(''+item[7]),
+						$('<td>').html('&nbsp;').data('pos', 8).addClass(chks[8] ? 'is_hit' : 'is_no_hit').text(''+item[8])
+					)
+				);
+			}
+			else {
+				$table.append(
+					$('<tr>').append(
+						$('<td>').text(' ').data('pos', 0).addClass(chks[0] ? 'is_hit' : 'is_no_hit').text(''+item[0]),
+						$('<td>').text(' ').data('pos', 1).addClass(chks[1] ? 'is_hit' : 'is_no_hit').text(''+item[1]),
+						$('<td>').text(' ').data('pos', 2).addClass(chks[2] ? 'is_hit' : 'is_no_hit').text(''+item[2]),
+						$('<td>').text(' ').data('pos', 3).addClass(chks[3] ? 'is_hit' : 'is_no_hit').text(''+item[3])
+					),
+					$('<tr>').append(
+						$('<td>').text(' ').data('pos', 4).addClass(chks[4] ? 'is_hit' : 'is_no_hit').text(''+item[4]),
+						$('<td>').text(' ').data('pos', 5).addClass(chks[5] ? 'is_hit' : 'is_no_hit').text(''+item[5]),
+						$('<td>').text(' ').data('pos', 6).addClass(chks[6] ? 'is_hit' : 'is_no_hit').text(''+item[6]),
+						$('<td>').text(' ').data('pos', 7).addClass(chks[7] ? 'is_hit' : 'is_no_hit').text(''+item[7])
+					),
+					$('<tr>').append(
+						$('<td>').text(' ').data('pos', 8).addClass(chks[8] ? 'is_hit' : 'is_no_hit').text(''+item[8]),
+						$('<td>').text(' ').data('pos', 9).addClass(chks[9] ? 'is_hit' : 'is_no_hit').text(''+item[9]),
+						$('<td>').text(' ').data('pos', 10).addClass(chks[10] ? 'is_hit' : 'is_no_hit').text(''+item[10]),
+						$('<td>').text(' ').data('pos', 11).addClass(chks[11] ? 'is_hit' : 'is_no_hit').text(''+item[11])
+					),
+					$('<tr>').append(
+						$('<td>').data('pos', 12).addClass(chks[12] ? 'is_hit' : 'is_no_hit').text(''+item[12]),
+						$('<td>').data('pos', 13).addClass(chks[13] ? 'is_hit' : 'is_no_hit').text(''+item[13]),
+						$('<td>').data('pos', 14).addClass(chks[14] ? 'is_hit' : 'is_no_hit').text(''+item[14]),
+						$('<td>').data('pos', 15).addClass(chks[15] ? 'is_hit' : 'is_no_hit').text(''+item[15])
+					)
+				);
+			}
+
+			return $('<div>').addClass('one_answer').append(
+				$('<div>').addClass('rm_one_answer').text('この解答を削除'),
+				$('<div>').append($table)
+			);
+		};
+
+		var answers = [];
+		var answerSetCnt = 0;
+		var intId = null;
+
+		var setEvent = function(obj){
+			$tgt.find('td').on('click', function(){
+				if (answerSetCnt >= obj.resultNum) {
+					answers = [];
+					$tgt.find('td').removeClass('is_selected');
+					return;
+				}
+				if (answers.length >= obj.ansLen) {
+					answers = [];
+					$tgt.find('td').removeClass('is_selected');
+				}
+				var $me = $(this);
+				var pos = $me.data('pos');
+				var ansLen = answers.length;
+				if (ansLen !== 0) {
+					if (!obj.isNearly(answers[ansLen - 1], pos)) {
+						window.alert('直前に選んだものと、となりあった場所を選んでください。');
+//						window.alert('となりあった場所を選んでください。['+obj.nn+']['+answers[ansLen - 1]+'][_'+pos+']');
+						return;
+					}
+					for(var i=0;i<ansLen;i++) {
+						if (answers[i] === pos) {
+							window.alert('同じ場所は選べません。');
+							return;
+						}
+					}
+				}
+				answers.push(pos);
+				$me.addClass('is_selected');
+				if (answers.length >= obj.ansLen) {
+
+					var alreadySets = {};
+					$answerBox.find('table.oneAnswerTable').each(function() {
+						var tmpSet = [];
+						var $oneTable = $(this);
+						$oneTable.find('.is_hit').each(function () {
+							tmpSet.push($(this).data('pos'));
+						});
+						tmpSet.sort();
+						alreadySets[tmpSet.join('_')] = true;
+					});
+					answers.sort();
+					if (alreadySets[answers.join('_')]) {
+						window.alert('すでに同じ回答があります。');
+						$tgt.find('td').removeClass('is_selected');
+						answers = [];
+						return;
+					}
+					var $answer = getAnswerBox(obj, answers);
+					$answerBox.append($answer);
+					$answer.find('.rm_one_answer').on('click', function(){
+						$answer.remove();
+						answerSetCnt--;
+					});
+					answerSetCnt++;
+					answers = [];
+					$tgt.find('td').removeClass('is_selected');
+				}
+			});
+		};
+
+		var startFnc = function(obj){
+			answers = [];
+			answerSetCnt = 0;
+
+			$tgt.html('');
+			$answerBox.html('');
+			var item = obj.getValidSet();
+			// item = {'src':test, 'setCnt':2, 'result':result, 'resultNum':resultNum};
+			if (obj.nn === 3) {
+				$tgt.append(
+					$('<tr>').append(
+						$('<td>').data('pos', 0).attr({'pos':0}).text(''+item[0]),
+						$('<td>').data('pos', 1).attr({'pos':1}).text(''+item[1]),
+						$('<td>').data('pos', 2).attr({'pos':2}).text(''+item[2])
+					),
+					$('<tr>').append(
+						$('<td>').data('pos', 3).attr({'pos':3}).text(''+item[3]),
+						$('<td>').data('pos', 4).attr({'pos':4}).text(''+item[4]),
+						$('<td>').data('pos', 5).attr({'pos':5}).text(''+item[5])
+					),
+					$('<tr>').append(
+						$('<td>').data('pos', 6).attr({'pos':6}).text(''+item[6]),
+						$('<td>').data('pos', 7).attr({'pos':7}).text(''+item[7]),
+						$('<td>').data('pos', 8).attr({'pos':8}).text(''+item[8])
+					)
+				);
+
+			}
+			else {
+				$tgt.append(
+					$('<tr>').append(
+						$('<td>').data('pos', 0).attr({'pos':0}).text(''+item[0]),
+						$('<td>').data('pos', 1).attr({'pos':1}).text(''+item[1]),
+						$('<td>').data('pos', 2).attr({'pos':2}).text(''+item[2]),
+						$('<td>').data('pos', 3).attr({'pos':3}).text(''+item[3])
+					),
+					$('<tr>').append(
+						$('<td>').data('pos', 4).attr({'pos':4}).text(''+item[4]),
+						$('<td>').data('pos', 5).attr({'pos':5}).text(''+item[5]),
+						$('<td>').data('pos', 6).attr({'pos':6}).text(''+item[6]),
+						$('<td>').data('pos', 7).attr({'pos':7}).text(''+item[7])
+					),
+					$('<tr>').append(
+						$('<td>').data('pos', 8).attr({'pos':8}).text(''+item[8]),
+						$('<td>').data('pos', 9).attr({'pos':9}).text(''+item[9]),
+						$('<td>').data('pos', 10).attr({'pos':10}).text(''+item[10]),
+						$('<td>').data('pos', 11).attr({'pos':11}).text(''+item[11])
+					),
+					$('<tr>').append(
+						$('<td>').data('pos', 12).attr({'pos':12}).text(''+item[12]),
+						$('<td>').data('pos', 13).attr({'pos':13}).text(''+item[13]),
+						$('<td>').data('pos', 14).attr({'pos':14}).text(''+item[14]),
+						$('<td>').data('pos', 15).attr({'pos':15}).text(''+item[15])
+					)
+				);
+			}
+			$question_choice.text(obj.ansLen);
+			$question_result.text(obj.getAnsValue());
+			$question_resultcnt.text(obj.resultNum);
+			$question.show();
+
+			setEvent(obj);
+
+			$ansCheck.on('click', function () {
+				if (timer.isStopped()) {
+					return;
+				}
+				var fail = false;
+				var ansCnt = 0;
+				$answerBox.find('.rm_one_answer').off('click').css('color', '#ccc');
+				$answerBox.find('table.oneAnswerTable').each(function(){
+					ansCnt++;
+					var tmpSet = [];
+					var $oneTable = $(this);
+					$oneTable.find('.is_hit').each(function(){
+						tmpSet.push($(this).data('pos'));
+					});
+					if (obj.validate(tmpSet)) {
+						$oneTable.addClass('is_ok');
+					} else {
+						fail = true;
+						$oneTable.addClass('is_bad');
+					}
+				});
+				if (obj.resultNum !== ansCnt) {
+					var msg = '残念。答えが不足しています。';
+					if (fail) {
+						msg += 'また、答えの中に、正しくないものもあります。'
+					}
+					window.alert(msg);
+				} else {
+					window.alert(fail ? '残念。正しくないものがあります。' : '正解です。おつかれさまでした。');
+				}
+				timer.stop();
+				if (!fail) {
+					history.save(timer.result);
+				}
+				var counter = 0;
+				var results = obj.getResultSets();
+				var $tds = $tgt.find('td');
+				$tds.off('click');
+				$tds.removeClass('is_selected');
+				$.each(results[counter], function(key,pos){
+					$tds.filter('[pos="'+pos+'"]').addClass('is_selected');
+				});
+				counter++;
+				intId = setInterval(function(){
+					if (results.length <= counter) {
+						counter = 0;
+					}
+					$tds.removeClass('is_selected');
+					$.each(results[counter], function(key,pos){
+						$tds.filter('[pos="'+pos+'"]').addClass('is_selected');
+					});
+					counter++;
+				}, 2*1000);
+			});
+			timer.start();
+		};
+
+		$('#startTest').on('click', function(){
+			if (intId) {
+				clearInterval(intId);
+			}
+			$ansCheck.off('click');
+			var nn = 4;
+			var choice = 3;
+			var resultcnt = 3;
+			var uniqcnt = 8;
+			var obj = new calcSrc.classes.Sagashizan(nn, choice, resultcnt, uniqcnt);
+			startFnc(obj);
+		});
+
+
+	});
+
+</script>
+
+</html>

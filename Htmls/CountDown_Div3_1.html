@@ -1,0 +1,129 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="./jquery.min.js"></script>
+	<script src="./calcSrc.js"></script>
+	<link rel="stylesheet" href="./calc.css" type="text/css" media="all"/>
+</head>
+<body>
+
+<div id="target">
+  <div id="header">
+  	<div id="timer">00:00</div>
+    <div id="detailButtons">
+      <input type="button" value="テスト開始" id="startTest"/>
+      <input type="button" value="成績" id="showDetail"/>
+    </div>
+  </div>
+  <div id="detailbox"></div>
+
+	<table id="targetTable">
+	</table>
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+		var questions = 100;
+    var limitSec = 180;
+
+    var history = new calcSrc.classes.ResultDb("cd180__Div3_1");
+    var $historyBtn = $('#showDetail');
+    var $historyBox = $('#detailbox');
+    if (!history.isAllow) {
+      $historyBtn.addClass('click_disable');
+    }
+    else {
+      $historyBtn.on('click', function(){
+        if ($historyBox.hasClass('detailbox_show')) {
+          $historyBox.removeClass('detailbox_show');
+          return;
+        }
+        $historyBox.addClass('detailbox_show');
+        var maxInfo = history.getMax();
+        var summaries = history.getRecent(10);
+        $historyBox.html('');
+        var $hisTable = $('<table>');
+        $.each(summaries, function(key, val){
+          $hisTable.append(
+            $('<tr>').append(
+              $('<td>').text(history.formatTime(val['dt'])),
+              $('<td>').addClass('table_result').text(val['value']+'問')
+            )
+          );
+        });
+        $historyBox.append(
+          $('<div>').append(
+            $('<span>').addClass('result_max').text('最高：'+ maxInfo['value'] + '問'),
+            $('<span>').addClass('result_max').text('('+history.formatTime(maxInfo['dt'])+')'),
+            $('<input type="button" value="消去" class="result_remove">')
+          ),
+          $hisTable
+        );
+        $historyBox.find('.result_remove').on('click', function(){
+          $historyBox.removeClass('detailbox_show');
+          history.clear();
+        });
+      });
+    }
+
+    var $tgt = $('#targetTable');
+    var timer = new calcSrc.classes.CountDownTimer($('#timer'), limitSec);
+
+    var calculator = new calcSrc.classes.Calculator();
+
+    var startFnc = function(){
+      $tgt.html('');
+      var formulaSet = (function(){
+	var dic = {};
+	var ret = [];
+	for (var i=0;i<questions; i++){
+		while(1) {
+			var tmp = calcSrc.getDivision_3digit_1digit();
+			var key = ''+tmp[0]+tmp[1]+tmp[2];
+			if (!dic[key]) {
+				dic[key] = true;
+				ret.push({'mode':'normal','formula':tmp});
+				break;
+			}
+		}
+	}
+	return ret;
+})();
+
+
+      $.each(formulaSet, function(key,formulaOrder){
+        var index = key+1;
+        $tgt.append(
+          $('<tr>').addClass('line').append(
+            $('<td>').addClass('num').text(''+index),
+            $('<td>').append(calculator.getQuestion(formulaOrder)),
+            $('<td>').addClass('result').text('')
+          )
+        );
+      });
+
+      timer.start(function(){
+        calculator.check($tgt);
+        $tgt.find('.ans').prop('disabled', true);
+        $tgt.find('.ans2').prop('disabled', true);
+        history.save(calculator.getValidCount());
+        $('#timer').text('今回の正解数:['+calculator.getValidCount()+']問')
+      });
+    };
+
+    $('#startTest').on('click', function(){
+      startFnc();
+    });
+
+
+	});
+
+</script>
+
+</html>
