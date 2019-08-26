@@ -36,6 +36,8 @@ class BuildSchoolCalc
     ['name'=>'DivA2_1', 'js'=>'DivA2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Div3_1', 'js'=>'Div3_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
 		['name'=>'DivA3_1', 'js'=>'DivA3_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+		['name'=>'Div3_2_Lv1', 'js'=>'Div3_2_Lv1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+		['name'=>'Div3_2_Lv2', 'js'=>'Div3_2_Lv2', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Pi_1', 'js'=>'Pi_1', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'FractSimple', 'js'=>'FractSimple', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'ToFractSimple', 'js'=>'ToFractSimple', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
