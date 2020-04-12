@@ -154,12 +154,7 @@ var calcSrc = {};
 		var first = calcSrc.getIntPair(1);
 		var second = calcSrc.getIntPair(1);
 		var tmp = 0;
-		if (first[0] > first[1]) {
-			tmp = first[1];
-			first[1] = first[0];
-			first[0] = tmp;
-		}
-		if (second[0] < second[1]) {
+		if (second[0] > second[1]) {
 			tmp = second[1];
 			second[1] = second[0];
 			second[0] = tmp;
@@ -186,6 +181,12 @@ var calcSrc = {};
 	calcSrc.getMultiple_2digit_1digit = function(){
 		var a1 = calcSrc.getRandom(10,99)+'';
 		var a2 = calcSrc.getRandom(2,9)+'';
+		return [a1, '×', a2];
+	};
+
+	calcSrc.getMultiple_2digit_2digit = function(){
+		var a1 = calcSrc.getRandom(10,99)+'';
+		var a2 = calcSrc.getRandom(10,99)+'';
 		return [a1, '×', a2];
 	};
 
@@ -1398,9 +1399,9 @@ th, td {
 
 	$(document).ready(function(){
 
-		var questions = 10;
+		var questions = 20;
 
-    var history = new calcSrc.classes.ResultDb("cu10__StorySetLv2");
+    var history = new calcSrc.classes.ResultDb("cu20__StorySetLv2");
     var $historyBtn = $('#showDetail');
     var $historyBox = $('#detailbox');
     var formatMs = function(val){
