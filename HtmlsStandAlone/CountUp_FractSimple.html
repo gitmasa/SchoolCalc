@@ -1001,6 +1001,26 @@ var calcSrc = {};
 						$('<div>').addClass('fraction_ope').addClass(me.config.resultClass).text('')
 					);
 				}
+				else if (ope === '*rev') { // 分数 => 小数
+					var rnd = calcSrc.getRandom(0,999) % 2;
+					var item1 = $('<span>')
+							.attr({'data-value': order.formula[0]})
+							.addClass(me.config.firstOperandClass).text(order.formula[0]);
+					var item2 = $('<input type="'+inputType+'">').attr('size', inputSize).addClass(me.config.firstAnswerClass);
+
+					$ret.addClass('normal').append(
+						rnd ? item1 : item2,
+						$('<span>')
+							.attr({'data-value': order.formula[1]})
+							.addClass(me.config.operatorClass).text('×'),
+						rnd ? item2 : item1,
+						$('<span>').addClass('equal').text('='),
+						$('<span>')
+							.attr({'data-value': order.formula[2]})
+							.addClass(me.config.secondOperandClass).text(order.formula[2]),
+						$('<span>').addClass(me.config.resultClass).text('')
+					);
+				}
 				return $ret;
 			},
 			check: function($parentDom){
@@ -1020,7 +1040,7 @@ var calcSrc = {};
 					var ans1 = $line.find('.'+me.config.firstAnswerClass).val();
 					var ans2 = $line.find('.'+me.config.secondAnswerClass).val();
 					if (ope === '+' || ope === '-' || ope === '×'
-						|| ope === '÷' || ope === '%' || ope === 'gcd' || ope === 'lcm') {
+						|| ope === '÷' || ope === '*rev' || ope === '%' || ope === 'gcd' || ope === 'lcm') {
 						first = parseInt(first, 10);
 						second = parseInt(second, 10);
 						ans1 = parseInt(ans1, 10);
@@ -1032,6 +1052,8 @@ var calcSrc = {};
 							valid = (first * second) === ans1;
 						} else if (ope === '÷') {
 							valid = (first / second) === ans1;
+						} else if (ope === '*rev') {
+							valid = (second / first) === ans1;
 						} else if (ope === '%') {
 							valid = (first % second) === ans1;
 						} else if (ope === 'gcd') { // 最大公約数

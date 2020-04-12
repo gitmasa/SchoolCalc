@@ -30,6 +30,7 @@ class BuildSchoolCalc
 		['name'=>'AddSub_Float_1', 'js'=>'AddSub_Float_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'AddSub_Float_12', 'js'=>'AddSub_Float_12', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Mul1_1', 'js'=>'Mul1_1', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
+		['name'=>'Mul1_1_rev', 'js'=>'Mul1_1_rev', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Mul1_1_all', 'js'=>'Mul1_1_all', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Mul2_1_1', 'js'=>'Mul2_1_1', 'up'=>self::COUNTUP_COUNT, 'down'=>200, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Mul2_1', 'js'=>'Mul2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
