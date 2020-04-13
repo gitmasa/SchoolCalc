@@ -1,0 +1,158 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+	<script src="./jquery.min.js"></script>
+	<script src="./calcSrc.js"></script>
+	<link rel="stylesheet" href="./calc.css" type="text/css" media="all"/>
+</head>
+<body>
+
+<div id="target">
+  <div id="header">
+    <div id="timer">00:00</div>
+    <div id="detailButtons">
+      <input type="button" value="テスト開始" id="startTest"/>
+      <input type="button" value="成績" id="showDetail"/>
+    </div>
+  </div>
+  <div id="detailbox"></div>
+	<table id="targetTable">
+	</table>
+	<div id="buttons">
+		<input type="button" id="anscheck" value="答え合わせ"/>
+	</div>
+</div>
+
+</body>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+
+		var questions = 20;
+
+    var history = new calcSrc.classes.ResultDb("cu20__Mul1_1_rev");
+    var $historyBtn = $('#showDetail');
+    var $historyBox = $('#detailbox');
+    var formatMs = function(val){
+      if (!val) {
+        return '--:--';
+      }
+      var _sec = val % 60;
+      var _min = (val - _sec) / 60;
+      return (_min < 10 ? '0' : '')+_min.toString()+':'+(_sec < 10 ? '0' : '')+_sec.toString();
+    };
+    if (!history.isAllow) {
+      $historyBtn.addClass('click_disable');
+    }
+    else {
+      $historyBtn.on('click', function(){
+        if ($historyBox.hasClass('detailbox_show')) {
+          $historyBox.removeClass('detailbox_show');
+          return;
+        }
+        $historyBox.addClass('detailbox_show');
+        var minInfo = history.getMin();
+        var summaries = history.getRecent(10);
+        $historyBox.html('');
+        var $hisTable = $('<table>');
+        $.each(summaries, function(key, val){
+          $hisTable.append(
+            $('<tr>').append(
+              $('<td>').text(history.formatTime(val['dt'])),
+              $('<td>').addClass('table_result').text(formatMs(val['value']))
+            )
+          );
+        });
+        $historyBox.append(
+          $('<div>').append(
+            $('<span>').addClass('result_max').text('最高：'+ formatMs(minInfo['value']) + ''),
+            $('<span>').addClass('result_max').text('('+history.formatTime(minInfo['dt'])+')'),
+            $('<input type="button" value="消去" class="result_remove">')
+          ),
+          $hisTable
+        );
+        $historyBox.find('.result_remove').on('click', function(){
+          $historyBox.removeClass('detailbox_show');
+          history.clear();
+        });
+      });
+    }
+
+    var timer = new calcSrc.classes.CountUpTimer($('#timer'));
+
+    var calculator = new calcSrc.classes.Calculator();
+
+		var $tgt = $('#targetTable');
+    var $ansCheck = $('#anscheck');
+    var startFnc = function() {
+
+      $ansCheck.off('click');
+      $tgt.html('');
+
+      var formulaSet = (function(){
+	var patterns = [
+		[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[1,8],[1,9],
+		[2,0],[2,2],[2,4],[2,6],[2,8],[2,10],[2,12],[2,14],[2,16],[2,18],
+		[3,0],[3,3],[3,6],[3,9],[3,12],[3,15],[3,18],[3,21],[3,24],[3,27],
+		[4,0],[4,4],[4,8],[4,12],[4,16],[4,20],[4,24],[4,28],[4,32],[4,36],
+		[5,0],[5,5],[5,10],[5,15],[5,20],[5,25],[5,30],[5,35],[5,40],[5,45],
+		[6,0],[6,6],[6,12],[6,18],[6,24],[6,30],[6,36],[6,42],[6,48],[6,54],
+		[7,0],[7,7],[7,14],[7,21],[7,28],[7,35],[7,42],[7,49],[7,56],[7,63],
+		[8,0],[8,8],[8,16],[8,24],[8,32],[8,40],[8,48],[8,56],[8,64],[8,72],
+		[9,0],[9,9],[9,18],[9,27],[9,36],[9,45],[9,54],[9,63],[9,72],[9,81]
+	];
+	for(var i = patterns.length - 1; i > 0; i--){
+		var r = Math.floor(Math.random() * (i + 1));
+		var tmp = patterns[i];
+		patterns[i] = patterns[r];
+		patterns[r] = tmp;
+	}
+	var ret = [];
+	for (i=0; i<questions; i++){
+		var pos = i;
+		if (i >= patterns.length) {
+			pos = calcSrc.getRandom(0, patterns.length-1);
+		}
+		ret.push({'mode':'normal','formula':[patterns[pos][0], '*rev', patterns[pos][1]]});
+	}
+	return ret;
+})();
+
+
+      $.each(formulaSet, function (key, formulaOrder) {
+        var index = key + 1;
+        $tgt.append(
+          $('<tr>').addClass('line').append(
+            $('<td>').addClass('num').text('' + index),
+            $('<td>').append(calculator.getQuestion(formulaOrder))
+          )
+        );
+      });
+
+      $ansCheck.on('click', function () {
+        if (timer.isStopped()) {
+          return;
+        }
+        calculator.check($tgt);
+        if (calculator.isAllValid()) {
+          $tgt.find('.ans').prop('disabled', true);
+          $tgt.find('.ans2').prop('disabled', true);
+          timer.stop();
+          history.save(timer.result);
+        }
+      });
+      timer.start();
+    };
+
+    $('#startTest').on('click', function(){
+      startFnc();
+    });
+
+
+  });
+
+</script>
+
+</html>
