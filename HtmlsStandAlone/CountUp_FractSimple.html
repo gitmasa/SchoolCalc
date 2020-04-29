@@ -1006,8 +1006,7 @@ var calcSrc = {};
 					var item1 = $('<span>')
 							.attr({'data-value': order.formula[0]})
 							.addClass(me.config.firstOperandClass).text(order.formula[0]);
-					var item2 = $('<input type="'+inputType+'">').attr('size', inputSize).addClass(me.config.firstAnswerClass);
-
+					var item2 = $('<input type="number">').attr('size', 5).addClass(me.config.firstAnswerClass);
 					$ret.addClass('normal').append(
 						rnd ? item1 : item2,
 						$('<span>')
