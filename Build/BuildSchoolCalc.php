@@ -39,6 +39,7 @@ class BuildSchoolCalc
     ['name'=>'Div2_1', 'js'=>'Div2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
 		['name'=>'Div2_1_Easy', 'js'=>'Div2_1_Easy', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'DivA2_1', 'js'=>'DivA2_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
+		['name'=>'DivA2_1_Easy', 'js'=>'DivA2_1_simple', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
     ['name'=>'Div3_1', 'js'=>'Div3_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
 		['name'=>'DivA3_1', 'js'=>'DivA3_1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
 		['name'=>'Div3_2_Lv1', 'js'=>'Div3_2_Lv1', 'up'=>self::COUNTUP_COUNT, 'down'=>100, 'down_sec'=>self::COUNTDOWN_LIMIT],
